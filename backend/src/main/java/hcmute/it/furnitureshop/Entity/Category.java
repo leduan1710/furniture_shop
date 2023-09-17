@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,4 +32,9 @@ public class Category implements Serializable{
     private List<Product> product;
 
     private String image;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "roomId")
+    private Room room;
 }
