@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Repository;
 
+import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Room;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -7,10 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RoomRepository extends CrudRepository<Room, Integer> {
-    @Override
-    Iterable<Room> findAll();
-
-    @Override
-    Optional<Room> findById(Integer integer);
+public interface CategoryRepository extends CrudRepository<Category,Integer> {
+    public Iterable<Category> findCategoriesByRoom(Optional<Room> room);
 }
