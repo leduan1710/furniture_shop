@@ -29,4 +29,9 @@ public class PublicController {
         Optional<Room> roomById=roomDAO.getById(roomId);
         return categoryDAO.getCategoriesByRoom(roomById);
     }
+
+    @RequestMapping("/category")
+    public Iterable<Category> getAllCategory(){
+        return categoryDAO.getAll();
+    }
 }

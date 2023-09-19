@@ -10,4 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends CrudRepository<Category,Integer> {
     public Iterable<Category> findCategoriesByRoom(Optional<Room> room);
+
+    @Override
+    Iterable<Category> findAll();
 }

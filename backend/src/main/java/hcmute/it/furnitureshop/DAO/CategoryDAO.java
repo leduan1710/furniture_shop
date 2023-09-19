@@ -15,4 +15,8 @@ public class CategoryDAO {
     public Iterable<Category> getCategoriesByRoom(Optional<Room> room){
         return categoryRepository.findCategoriesByRoom(room);
     }
+
+    public Iterable<Category> getAll(){
+        return  categoryRepository.findAll();
+    }
 }
