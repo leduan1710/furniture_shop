@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -59,5 +60,8 @@ public class Product implements Serializable {
     @ManyToOne
     @JoinColumn(name = "discountId")
     private Discount discount;
+
+    private int numberProductSold;
+    private Date dateImport;
 
 }
