@@ -45,4 +45,9 @@ public class PublicController {
     public Iterable<Product> getTop8Product(){
         return productDAO.getTop8Product();
     }
+
+    @RequestMapping("/product/{productId}")
+    public Optional<Product> getProductById(@PathVariable("productId") Integer productId){
+        return productDAO.getProductById(productId);
+    }
 }

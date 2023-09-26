@@ -48,6 +48,12 @@ public class Product implements Serializable {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
+    @Column(name="material",columnDefinition = "text")
+    private String material;
+
+    @Column(name="size",columnDefinition = "text")
+    private String size;
+
     @JsonManagedReference
     @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
     private List<Review> reviews;
