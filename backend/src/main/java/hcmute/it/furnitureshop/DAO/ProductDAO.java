@@ -14,10 +14,14 @@ public class ProductDAO {
     ProductRepository productRepository;
 
     public Iterable<Product> getTop8Product(){
-        return productRepository.finTop8ByProductSold();
+        return productRepository.findTop8ByProductSold();
     }
 
     public Optional<Product> getProductById(Integer productId){
         return productRepository.findById(productId);
+    }
+
+    public Iterable<Product> getProductByNameContaining(String name){
+        return productRepository.findProductsByNameContaining(name);
     }
 }

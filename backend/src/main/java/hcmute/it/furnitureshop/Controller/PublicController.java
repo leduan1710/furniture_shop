@@ -50,4 +50,9 @@ public class PublicController {
     public Optional<Product> getProductById(@PathVariable("productId") Integer productId){
         return productDAO.getProductById(productId);
     }
+
+    @RequestMapping("/product/containing/{name}")
+    public Iterable<Product> getProductByNameContaining(@PathVariable("name")String name){
+        return productDAO.getProductByNameContaining(name);
+    }
 }
