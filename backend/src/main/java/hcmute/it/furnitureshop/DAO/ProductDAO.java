@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.DAO;
 
+import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,9 @@ public class ProductDAO {
 
     public Iterable<Product> getProductByNameContaining(String name){
         return productRepository.findProductsByNameContaining(name);
+    }
+
+    public  Iterable<Product> getProductsByCategory(Category category){
+        return productRepository.findProductsByCategory(category);
     }
 }

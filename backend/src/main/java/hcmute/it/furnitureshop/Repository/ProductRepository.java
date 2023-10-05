@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Repository;
 
+import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,7 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
 
     @Transactional
     Iterable<Product> findProductsByNameContaining(String name);
+
+    @Transactional
+    Iterable<Product> findProductsByCategory(Category category);
 }

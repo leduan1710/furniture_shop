@@ -3,6 +3,8 @@ package hcmute.it.furnitureshop.Repository;
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Room;
 import jakarta.transaction.Transactional;
+import org.springframework.boot.autoconfigure.quartz.QuartzTransactionManager;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +18,8 @@ public interface CategoryRepository extends CrudRepository<Category,Integer> {
     @Override
     @Transactional
     Iterable<Category> findAll();
+
+    @Override
+    @Transactional
+    Optional<Category> findById(Integer integer);
 }
