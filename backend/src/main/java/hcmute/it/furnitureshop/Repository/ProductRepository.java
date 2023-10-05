@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ProductRepository extends CrudRepository<Product,Integer> {
 
     @Transactional
-    @Query(value="SELEsCT * FROM springserverdb.product ORDER BY number_product_sold desc limit 8", nativeQuery = true)
+    @Query(value="SELECT * FROM springserverdb.product ORDER BY number_product_sold desc limit 8", nativeQuery = true)
     Iterable<Product> findTop8ByProductSold();
 
     @Override
