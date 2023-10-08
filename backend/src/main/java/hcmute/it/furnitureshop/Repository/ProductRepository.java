@@ -15,8 +15,6 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
     @Query(value="SELEsCT * FROM springserverdb.product ORDER BY number_product_sold desc limit 8", nativeQuery = true)
     Iterable<Product> findTop8ByProductSold();
 
-    @Override
-    Optional<Product> findById(Integer integer);
 
     @Transactional
     Iterable<Product> findProductsByNameContaining(String name);

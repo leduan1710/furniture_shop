@@ -1,12 +1,11 @@
 package hcmute.it.furnitureshop.Controller;
 
-import hcmute.it.furnitureshop.DAO.CategoryDAO;
-import hcmute.it.furnitureshop.DAO.ProductDAO;
-import hcmute.it.furnitureshop.DAO.RoomDAO;
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.Room;
-import hcmute.it.furnitureshop.Repository.ProductRepository;
+import hcmute.it.furnitureshop.Service.CategoryService;
+import hcmute.it.furnitureshop.Service.ProductService;
+import hcmute.it.furnitureshop.Service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,41 +17,41 @@ import java.util.Optional;
 @RestController
 public class PublicController {
     @Autowired
-    RoomDAO roomDAO;
+    RoomService roomService;
 
     @Autowired
-    CategoryDAO categoryDAO;
+    CategoryService categoryService;
 
     @Autowired
-    ProductDAO productDAO;
+    ProductService productService;
     @GetMapping("/room")
     public Iterable<Room> getAllRoom(){
-        return roomDAO.getAll();
+        return roomService.getAll();
     }
 
     @RequestMapping("/room/categories/{id}")
     public Iterable<Category> getCategoriesByRoom(@PathVariable("id") Integer roomId){
-        Optional<Room> roomById=roomDAO.getById(roomId);
-        return categoryDAO.getCategoriesByRoom(roomById);
+        Optional<Room> roomById= roomService.getById(roomId);
+        return categoryService.getCategoriesByRoom(roomById);
     }
 
     @RequestMapping("/category")
     public Iterable<Category> getAllCategory(){
-        return categoryDAO.getAll();
+        return categoryService.getAll();
     }
 
     @RequestMapping("/product/top8Product")
     public Iterable<Product> getTop8Product(){
-        return productDAO.getTop8Product();
+        return productService.getTop8Product();
     }
 
     @RequestMapping("/product/{productId}")
     public Optional<Product> getProductById(@PathVariable("productId") Integer productId){
-        return productDAO.getProductById(productId);
+        return productService.getProductById(productId);
     }
 
     @RequestMapping("/product/containing/{name}")
     public Iterable<Product> getProductByNameContaining(@PathVariable("name")String name){
-        return productDAO.getProductByNameContaining(name);
+        return productService.getProductByNameContaining(name);
     }
 }
