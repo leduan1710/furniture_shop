@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
+import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Repository.ProductRepository;
 import hcmute.it.furnitureshop.Service.ProductService;
@@ -31,5 +32,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Iterable<Product> getProductByNameContaining(String name) {
         return productRepository.findProductsByNameContaining(name);
+    }
+
+    public  Iterable<Product> getProductsByCategory(Category category){
+        return productRepository.findProductsByCategory(category);
     }
 }

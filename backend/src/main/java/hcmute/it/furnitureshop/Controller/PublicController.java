@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 @RestController
@@ -53,5 +55,16 @@ public class PublicController {
     @RequestMapping("/product/containing/{name}")
     public Iterable<Product> getProductByNameContaining(@PathVariable("name")String name){
         return productService.getProductByNameContaining(name);
+    }
+
+    @RequestMapping("/productsByCategory/{categoryId}")
+    public Iterable<Product> getProductsByCategory(@PathVariable("categoryId")Integer categoryId){
+        Optional<Category> category=categoryService.findById(categoryId);
+        return productService.getProductsByCategory(category.get());
+    }
+
+    @RequestMapping("/getCategory/{categoryId}")
+    public Optional<Category> getCategoryById(@PathVariable("categoryId")Integer categoryId){
+        return categoryService.findById(categoryId);
     }
 }
