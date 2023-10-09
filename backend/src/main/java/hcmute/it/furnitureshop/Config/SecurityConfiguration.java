@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Config;
 
+import hcmute.it.furnitureshop.Common.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,8 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
+            "/guest/**"};
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
@@ -36,8 +39,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(antMatcher("/api/v1/auth/**"))
                 .permitAll()
-                .requestMatchers(antMatcher("/**"))
+                .requestMatchers(antMatcher("/guest/**"))
                 .permitAll()
+                .requestMatchers(antMatcher("/user/**")).permitAll()
+                //.hasAuthority(RoleEnum.USER.name())
+                .requestMatchers(antMatcher("/admin/**")).permitAll()
+                //.hasAuthority(RoleEnum.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
