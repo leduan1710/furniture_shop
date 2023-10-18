@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.Auth;
 
 
+import hcmute.it.furnitureshop.Service.Impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +14,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-
+    @Autowired
+    UserServiceImpl userService;
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ){
-        return ResponseEntity.ok(authenticationService.register(request));
+        if(userService.findByName(request.getUsername()) == null){
+            return ResponseEntity.ok(authenticationService.register(request));
+        }
+        else{
+            return null;
+        }
     }
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ){
