@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 
 @RestController
@@ -29,11 +32,24 @@ public class GuestController {
     public Iterable<Room> getAllRoom(){
         return roomService.getAll();
     }
-
+    @GetMapping("/room/{roomId}")
+    public Optional<Room> getRoomById(@PathVariable("roomId")Integer roomId){
+        return roomService.getById(roomId);
+    }
     @RequestMapping("/room/categories/{id}")
     public Iterable<Category> getCategoriesByRoom(@PathVariable("id") Integer roomId){
         Optional<Room> roomById= roomService.getById(roomId);
         return categoryService.getCategoriesByRoom(roomById);
+    }
+    @RequestMapping("/room/products/{id}")
+    public Iterable<Product> getProductsByRoom(@PathVariable("id") Integer roomId){
+        Optional<Room> roomById= roomService.getById(roomId);
+        Iterable<Category> categories=categoryService.getCategoriesByRoom(roomById);
+        ArrayList<Product> products = new ArrayList<>();
+        categories.forEach(category -> {
+            products.addAll((Collection<? extends Product>) productService.getProductsByCategory(category));
+        });
+        return products;
     }
 
     @RequestMapping("/category")
