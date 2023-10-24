@@ -22,12 +22,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ){
-        if(userService.findByName(request.getUsername()) == null){
-            return ResponseEntity.ok(authenticationService.register(request));
-        }
-        else{
-            return null;
-        }
+        return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/login")
