@@ -62,7 +62,7 @@ public class Product implements Serializable {
     @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
     private List<Order> orders;
 
-    @JsonBackReference
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "discountId")
     private Discount discount;

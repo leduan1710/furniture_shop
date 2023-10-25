@@ -87,6 +87,18 @@ public class GuestController {
         Optional<Category> category=categoryService.findById(categoryId);
         return productService.getProductByCategoryAndPriceAsc(category.get());
     }
+    @RequestMapping("/productsByCategoryOrderDiscount/{categoryId}")
+    public Iterable<Product> getProductsByCategoryAndDiscount(@PathVariable("categoryId")Integer categoryId){
+        Optional<Category> category=categoryService.findById(categoryId);
+        Iterable<Product> products= productService.getProductsByCategory(category.get());
+        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
+        products.forEach(product -> {
+            if(product.getDiscount()!=null){
+                productsHaveDisCount.add(product);
+            }
+        });
+        return productsHaveDisCount;
+    }
     @RequestMapping("/getCategory/{categoryId}")
     public Optional<Category> getCategoryById(@PathVariable("categoryId")Integer categoryId){
         return categoryService.findById(categoryId);
