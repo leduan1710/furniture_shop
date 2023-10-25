@@ -37,4 +37,14 @@ public class ProductServiceImpl implements ProductService {
     public  Iterable<Product> getProductsByCategory(Category category){
         return productRepository.findProductsByCategory(category);
     }
+
+    @Override
+    public Iterable<Product> getProductByCategoryAndPriceDesc(Category category) {
+        return productRepository.findProductsByCategoryOrderByPriceDesc(category);
+    }
+
+    @Override
+    public Iterable<Product> getProductByCategoryAndPriceAsc(Category category) {
+        return productRepository.findProductsByCategoryOrderByPriceAsc(category);
+    }
 }

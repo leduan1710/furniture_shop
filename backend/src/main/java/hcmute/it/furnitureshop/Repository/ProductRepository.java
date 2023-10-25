@@ -22,4 +22,11 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
 
     @Transactional
     Iterable<Product> findProductsByCategory(Category category);
+
+    @Transactional
+    Iterable<Product> findProductsByCategoryOrderByPriceDesc(Category category);
+    @Transactional
+    Iterable<Product> findProductsByCategoryOrderByPriceAsc(Category category);
+
+
 }

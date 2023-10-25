@@ -10,4 +10,9 @@ public interface ProductService {
     public Optional<Product> getProductById(Integer productId);
     public Iterable<Product> getProductByNameContaining(String name);
     Iterable<Product> getProductsByCategory(Category category);
+
+    Iterable<Product> getProductByCategoryAndPriceDesc(Category category);
+    Iterable<Product> getProductByCategoryAndPriceAsc(Category category);
+
+
 }
