@@ -32,6 +32,7 @@ public class Category implements Serializable{
     private List<Product> product;
 
     private String image;
+    private String icon;
 
     @JsonBackReference
     @ManyToOne

@@ -30,8 +30,6 @@ public class User implements UserDetails {
     private String name;
     private String image;
     private String address;
-    private String address2;
-    private String address3;
     private Date createDate;
     private String phone;
     @Enumerated(EnumType.STRING)
