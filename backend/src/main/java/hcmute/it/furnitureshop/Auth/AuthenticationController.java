@@ -30,6 +30,7 @@ public class AuthenticationController {
             @RequestBody RegisterRequest request
     ){
         if(!userService.findByName(request.getUsername()).isPresent()){
+            request.setPhone(request.getUsername());
             return ResponseEntity.ok(authenticationService.register(request));
         }
         else{
@@ -54,6 +55,7 @@ public class AuthenticationController {
             registerRequest.setUsername(request.getUsername());
             registerRequest.setPassword(request.getPassword());
             registerRequest.setName(request.getUsername());
+            registerRequest.setPhone(null);
             return ResponseEntity.status(201).body(authenticationService.register(registerRequest));
         }else{
             return ResponseEntity.ok(authenticationService.authenticate(request));

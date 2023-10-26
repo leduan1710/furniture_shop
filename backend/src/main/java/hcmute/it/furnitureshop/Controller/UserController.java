@@ -38,9 +38,13 @@ public class UserController {
     }
 
     @RequestMapping("/addPhone/{phone}")
-    public void savePhoneOfUser(@PathVariable("phone")String phone){
+    public ResponseEntity<String> savePhoneOfUser(@PathVariable("phone")String phone){
+        if(userService.findByPhone(phone).isPresent()){
+            return ResponseEntity.status(204).body("Đã tồn tại");
+        }
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
         user.get().setPhone(phone);
         userService.savePhoneOfUser(user.get());
+        return ResponseEntity.status(200).body("Cập nhật thành công");
     }
 }
