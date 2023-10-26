@@ -6,6 +6,7 @@ import hcmute.it.furnitureshop.Service.Impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,5 +35,12 @@ public class UserController {
     @RequestMapping("/check")
     public ResponseEntity<String> sayHello(){
         return ResponseEntity.ok("Hello User");
+    }
+
+    @RequestMapping("/addPhone/{phone}")
+    public void savePhoneOfUser(@PathVariable("phone")String phone){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        user.get().setPhone(phone);
+        userService.savePhoneOfUser(user.get());
     }
 }

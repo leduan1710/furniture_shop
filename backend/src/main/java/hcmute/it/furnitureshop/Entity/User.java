@@ -33,6 +33,7 @@ public class User implements UserDetails {
     private String address2;
     private String address3;
     private Date createDate;
+    private String phone;
     @Enumerated(EnumType.STRING)
     private RoleEnum role = RoleEnum.USER;
 

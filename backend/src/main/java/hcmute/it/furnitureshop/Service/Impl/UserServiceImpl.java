@@ -17,4 +17,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(name);
     }
 
+    @Override
+    public <S extends User> void savePhoneOfUser(User user){
+        userRepository.save(user);
+    }
+
 }

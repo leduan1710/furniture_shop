@@ -55,7 +55,10 @@ public class AuthenticationController {
             registerRequest.setPassword(request.getPassword());
             registerRequest.setName(request.getUsername());
             return ResponseEntity.status(201).body(authenticationService.register(registerRequest));
+        }else{
+            return ResponseEntity.ok(authenticationService.authenticate(request));
+
         }
-        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
+
 }

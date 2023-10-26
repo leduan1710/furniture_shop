@@ -24,6 +24,7 @@ public class AuthenticationService {
         var user = User.builder().name(request.getName())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .phone(request.getUsername())
                 .role(RoleEnum.USER)
                 .build();
         repository.save(user);
