@@ -13,6 +13,10 @@ public interface ProductService {
 
     Iterable<Product> getProductByCategoryAndPriceDesc(Category category);
     Iterable<Product> getProductByCategoryAndPriceAsc(Category category);
+    Iterable<Product> findProductByRoomDesc(Integer roomId);
 
+    Iterable<Product> findProductByRoomAsc(Integer roomId);
+
+    Iterable<Product> findProductByRoomSale(Integer roomId);
 
 }

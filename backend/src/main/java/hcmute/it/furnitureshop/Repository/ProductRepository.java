@@ -17,6 +17,11 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
     Iterable<Product> findTop8ByProductSold();
 
 
+    Iterable<Product> findProductsByCategory_Room_RoomIdOrderByPriceDesc(Integer roomId);
+    Iterable<Product> findProductsByCategory_Room_RoomIdOrderByPriceAsc(Integer roomId);
+    Iterable<Product> findProductsByCategory_Room_RoomId(Integer roomId);
+
+
     @Transactional
     Iterable<Product> findProductsByNameContaining(String name);
 

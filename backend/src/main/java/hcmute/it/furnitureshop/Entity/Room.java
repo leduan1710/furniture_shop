@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +21,7 @@ public class Room {
 
     private String roomName;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy="room",cascade = CascadeType.ALL)
     private List<Category> categories;
 

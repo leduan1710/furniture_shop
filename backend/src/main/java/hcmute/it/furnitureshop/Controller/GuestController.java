@@ -103,4 +103,24 @@ public class GuestController {
     public Optional<Category> getCategoryById(@PathVariable("categoryId")Integer categoryId){
         return categoryService.findById(categoryId);
     }
+
+    @RequestMapping("/ProductDescByRoom/{roomId}")
+    public Iterable<Product> getProductDescByRoom(@PathVariable("roomId") Integer roomId){
+        return productService.findProductByRoomDesc(roomId);
+    }
+    @RequestMapping("/ProductAscByRoom/{roomId}")
+    public Iterable<Product> getProductAscByRoom(@PathVariable("roomId") Integer roomId){
+        return productService.findProductByRoomAsc(roomId);
+    }
+    @RequestMapping("/ProductSaleByRoom/{roomId}")
+    public Iterable<Product> getProductSaleByRoom(@PathVariable("roomId") Integer roomId){
+        Iterable<Product> products= productService.findProductByRoomSale(roomId);
+        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
+        products.forEach(product -> {
+            if(product.getDiscount()!=null){
+                productsHaveDisCount.add(product);
+            }
+        });
+        return productsHaveDisCount;
+    }
 }
