@@ -5,10 +5,7 @@ import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Service.Impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -46,5 +43,13 @@ public class UserController {
         user.get().setPhone(phone);
         userService.savePhoneOfUser(user.get());
         return ResponseEntity.status(200).body("Cập nhật thành công");
+    }
+
+    @RequestMapping("/saveUser")
+    public void saveUser(@RequestBody User user){
+        Optional<User> userCurrent=userService.findByName(jwtService.extractUserName(getToken()));
+        userCurrent.get().setName(user.getName());
+        userService.saveUser(user);
+
     }
 }
