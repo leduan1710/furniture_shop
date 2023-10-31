@@ -9,10 +9,9 @@ import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -24,6 +23,7 @@ public class AuthenticationController {
     @Autowired
     UserServiceImpl userService;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
@@ -37,15 +37,20 @@ public class AuthenticationController {
             return null;
         }
     }
-
+    @PostMapping("/resetPassword/{phone}")
+    public ResponseEntity<AuthenticationResponse> resetPassword(@RequestBody AuthenticationRequest request, @PathVariable("phone")String phone){
+        Optional<User> user=userService.findByName(phone);
+        if(user.isPresent())
+            return ResponseEntity.ok(authenticationService.resetPassword(request.getPassword(),user.get()));
+        else
+            return null;
+    }
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
-
-
     @PostMapping("/login-gmail")
     public ResponseEntity<AuthenticationResponse> authenticateGmail(
             @RequestBody AuthenticationRequest request

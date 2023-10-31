@@ -6,6 +6,7 @@ import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Service.CategoryService;
 import hcmute.it.furnitureshop.Service.ProductService;
 import hcmute.it.furnitureshop.Service.RoomService;
+import hcmute.it.furnitureshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,9 @@ public class GuestController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    UserService userService;
     @GetMapping("/room")
     public Iterable<Room> getAllRoom(){
         return roomService.getAll();
@@ -123,4 +127,14 @@ public class GuestController {
         });
         return productsHaveDisCount;
     }
+
+    @RequestMapping("/checkPhone/{phone}")
+    public boolean checkPhone(@PathVariable("phone")String phone){
+        if(userService.findByName(phone).isPresent()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

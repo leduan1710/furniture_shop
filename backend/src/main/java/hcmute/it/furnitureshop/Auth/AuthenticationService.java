@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -25,13 +27,19 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
+                .createDate(new Date())
                 .role(RoleEnum.USER)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
-
+    public AuthenticationResponse resetPassword(String password,User newUser){
+        newUser.setPassword(passwordEncoder.encode(password));
+        repository.save(newUser);
+        var jwtToken = jwtService.generateToken(newUser);
+        return AuthenticationResponse.builder().token(jwtToken).build();
+    }
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
