@@ -63,4 +63,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByCategory_Room_RoomId(roomId);
     }
 
+    @Override
+    public Optional<Product> findById(Integer productId) {
+        return productRepository.findById(productId);
+    }
+
+
 }

@@ -51,4 +51,18 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
+    public Boolean check(AuthenticationRequest request){
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+
+    }
 }

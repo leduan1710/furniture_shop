@@ -60,6 +60,10 @@ public class Product implements Serializable {
 
     @JsonManagedReference
     @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
+    private List<Favorite> favorites;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
     private List<Order> orders;
 
     @JsonManagedReference

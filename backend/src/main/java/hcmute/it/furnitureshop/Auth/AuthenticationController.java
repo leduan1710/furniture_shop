@@ -51,6 +51,12 @@ public class AuthenticationController {
     ){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
+    @PostMapping("/check")
+    public Boolean check(
+            @RequestBody AuthenticationRequest request
+    ){
+        return authenticationService.check(request);
+    }
     @PostMapping("/login-gmail")
     public ResponseEntity<AuthenticationResponse> authenticateGmail(
             @RequestBody AuthenticationRequest request
