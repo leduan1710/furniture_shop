@@ -2,11 +2,9 @@ package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
+import hcmute.it.furnitureshop.Entity.Review;
 import hcmute.it.furnitureshop.Entity.Room;
-import hcmute.it.furnitureshop.Service.CategoryService;
-import hcmute.it.furnitureshop.Service.ProductService;
-import hcmute.it.furnitureshop.Service.RoomService;
-import hcmute.it.furnitureshop.Service.UserService;
+import hcmute.it.furnitureshop.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +30,9 @@ public class GuestController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ReviewService reviewService;
     @GetMapping("/room")
     public Iterable<Room> getAllRoom(){
         return roomService.getAll();
@@ -135,6 +136,12 @@ public class GuestController {
         }else{
             return false;
         }
+    }
+
+    @GetMapping("/reviewByProduct/{productId}")
+    public Iterable<Review> findReviewsByProduct(@PathVariable("productId")Integer productId){
+        Optional<Product> product=productService.findById(productId);
+        return reviewService.findByProduct(product.get());
     }
 
 }

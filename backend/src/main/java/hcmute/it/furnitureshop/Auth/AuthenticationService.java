@@ -28,6 +28,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .createDate(new Date())
+                .image("https://frontend.tikicdn.com/_desktop-next/static/img/account/avatar.png")
                 .role(RoleEnum.USER)
                 .build();
         repository.save(user);

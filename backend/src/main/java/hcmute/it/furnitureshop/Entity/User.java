@@ -41,9 +41,17 @@ public class User implements UserDetails {
     @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
     private List<Order> orders;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    @JsonBackReference
+    @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
+    private List<ResponseReview> responseReviews;
+    @JsonBackReference
+    @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
+    private List<Rating> ratings;
+
 
     @JsonBackReference
     @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
