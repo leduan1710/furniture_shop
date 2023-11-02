@@ -19,4 +19,7 @@ public interface ProductService {
 
     Iterable<Product> findProductByRoomSale(Integer roomId);
 
+    Optional<Product> findById(Integer productId);
+
+
 }

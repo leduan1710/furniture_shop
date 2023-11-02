@@ -10,4 +10,6 @@ public interface UserService {
     public <S extends User> void saveUser(User user);
 
     public Optional<User> findByPhone(String phone);
+
+    public Optional<User> findById(Integer userId);
 }

@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Repository;
 
+import hcmute.it.furnitureshop.Entity.Favorite;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
 
@@ -19,5 +20,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByPhone(String phone);
 
-
+    @Override
+    Optional<User> findById(Integer integer);
 }

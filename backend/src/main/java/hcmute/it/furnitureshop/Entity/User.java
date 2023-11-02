@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import hcmute.it.furnitureshop.Common.RoleEnum;
 import jakarta.persistence.*;
@@ -43,6 +44,10 @@ public class User implements UserDetails {
     @JsonManagedReference
     @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    @JsonBackReference
+    @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
+    private List<Favorite> favorites;
 
     @JsonManagedReference
     @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
