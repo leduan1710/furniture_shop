@@ -36,7 +36,8 @@ public class Order implements Serializable{
     private Product product;
 
     private Date date;
-    private String address;
 
+    private Boolean paid;
 
+    private Boolean nowDelivery;
 }
