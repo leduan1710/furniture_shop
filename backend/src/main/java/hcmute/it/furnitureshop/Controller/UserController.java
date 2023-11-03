@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,6 +28,7 @@ public class UserController {
                 .getHeader("Authorization")
                 .replace("Bearer ","");
     }
+
     @RequestMapping("/findByName")
     public Optional<User> findByName(){
         return userService.findByName(jwtService.extractUserName(getToken()));
