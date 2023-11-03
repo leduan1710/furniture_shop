@@ -2,10 +2,9 @@ package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
+import hcmute.it.furnitureshop.Entity.Review;
 import hcmute.it.furnitureshop.Entity.Room;
-import hcmute.it.furnitureshop.Service.CategoryService;
-import hcmute.it.furnitureshop.Service.ProductService;
-import hcmute.it.furnitureshop.Service.RoomService;
+import hcmute.it.furnitureshop.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +27,12 @@ public class GuestController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    ReviewService reviewService;
     @GetMapping("/room")
     public Iterable<Room> getAllRoom(){
         return roomService.getAll();
@@ -103,4 +108,40 @@ public class GuestController {
     public Optional<Category> getCategoryById(@PathVariable("categoryId")Integer categoryId){
         return categoryService.findById(categoryId);
     }
+
+    @RequestMapping("/ProductDescByRoom/{roomId}")
+    public Iterable<Product> getProductDescByRoom(@PathVariable("roomId") Integer roomId){
+        return productService.findProductByRoomDesc(roomId);
+    }
+    @RequestMapping("/ProductAscByRoom/{roomId}")
+    public Iterable<Product> getProductAscByRoom(@PathVariable("roomId") Integer roomId){
+        return productService.findProductByRoomAsc(roomId);
+    }
+    @RequestMapping("/ProductSaleByRoom/{roomId}")
+    public Iterable<Product> getProductSaleByRoom(@PathVariable("roomId") Integer roomId){
+        Iterable<Product> products= productService.findProductByRoomSale(roomId);
+        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
+        products.forEach(product -> {
+            if(product.getDiscount()!=null){
+                productsHaveDisCount.add(product);
+            }
+        });
+        return productsHaveDisCount;
+    }
+
+    @RequestMapping("/checkPhone/{phone}")
+    public boolean checkPhone(@PathVariable("phone")String phone){
+        if(userService.findByName(phone).isPresent()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @GetMapping("/reviewByProduct/{productId}")
+    public Iterable<Review> findReviewsByProduct(@PathVariable("productId")Integer productId){
+        Optional<Product> product=productService.findById(productId);
+        return reviewService.findByProduct(product.get());
+    }
+
 }

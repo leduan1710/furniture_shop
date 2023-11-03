@@ -36,8 +36,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public <S extends User> void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+
+    @Override
     public Optional<User> findByPhone(String phone) {
         return userRepository.findByPhone(phone);
+    }
+
+    @Override
+    public Optional<User> findById(Integer userId) {
+        return userRepository.findById(userId);
     }
 
 }

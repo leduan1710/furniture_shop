@@ -34,7 +34,7 @@ public class Category implements Serializable{
     private String image;
     private String icon;
 
-    @JsonBackReference
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "roomId")
     private Room room;

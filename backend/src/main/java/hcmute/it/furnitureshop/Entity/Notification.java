@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,14 +21,10 @@ public class Notification {
     @JoinColumn(name = "userId")
     private User user;
 
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "orderId")
-    private Order order;
+    private Date date;
 
+    private String description;
 
-    String description;
-
-    String state;
+    private  Boolean state;
 
 }

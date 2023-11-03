@@ -48,4 +48,25 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByCategoryOrderByPriceAsc(category);
     }
 
+    @Override
+    public Iterable<Product> findProductByRoomDesc(Integer roomId) {
+        return productRepository.findProductsByCategory_Room_RoomIdOrderByPriceDesc(roomId);
+    }
+
+    @Override
+    public Iterable<Product> findProductByRoomAsc(Integer roomId) {
+        return productRepository.findProductsByCategory_Room_RoomIdOrderByPriceAsc(roomId);
+    }
+
+    @Override
+    public Iterable<Product> findProductByRoomSale(Integer roomId) {
+        return productRepository.findProductsByCategory_Room_RoomId(roomId);
+    }
+
+    @Override
+    public Optional<Product> findById(Integer productId) {
+        return productRepository.findById(productId);
+    }
+
+
 }

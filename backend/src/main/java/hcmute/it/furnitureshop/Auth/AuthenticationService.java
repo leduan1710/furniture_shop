@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -25,13 +27,20 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
+                .createDate(new Date())
+                .image("https://frontend.tikicdn.com/_desktop-next/static/img/account/avatar.png")
                 .role(RoleEnum.USER)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
-
+    public AuthenticationResponse resetPassword(String password,User newUser){
+        newUser.setPassword(passwordEncoder.encode(password));
+        repository.save(newUser);
+        var jwtToken = jwtService.generateToken(newUser);
+        return AuthenticationResponse.builder().token(jwtToken).build();
+    }
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -42,5 +51,19 @@ public class AuthenticationService {
         var user = repository.findByUsername(request.getUsername()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+    public Boolean check(AuthenticationRequest request){
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+
     }
 }

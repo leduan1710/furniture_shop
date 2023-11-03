@@ -38,8 +38,5 @@ public class Order implements Serializable{
     private Date date;
     private String address;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy="order",cascade = CascadeType.ALL)
-    private Set<Notification> notifications;
 
 }

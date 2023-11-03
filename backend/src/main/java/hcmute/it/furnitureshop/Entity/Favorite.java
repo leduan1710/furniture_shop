@@ -5,21 +5,19 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-import java.util.List;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "Review")
-public class Review {
+@Table(name = "Favorite",uniqueConstraints = {@UniqueConstraint(name="user_product", columnNames={"userId", "productId"})})
+public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reviewId")
-    private int reviewId;
+    @Column(name = "favoriteId")
+    private int favoriteId;
+
     @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "userId")
@@ -29,12 +27,4 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
-
-    @JsonBackReference
-    @OneToMany(mappedBy="review",cascade = CascadeType.ALL)
-    private List<ResponseReview> responseReviews;
-
-    private String content;
-
-    private Date date;
 }
