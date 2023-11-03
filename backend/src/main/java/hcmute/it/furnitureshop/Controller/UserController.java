@@ -55,7 +55,7 @@ public class UserController {
     public ResponseEntity<String> savePhoneOfUser(@PathVariable("phone")String phone){
         try{
             if(userService.findByPhone(phone).isPresent()){
-                return ResponseEntity.status(204).body("Đã tồn tại");
+                return ResponseEntity.status(204).body("Không có gì");
             }
             Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
             user.get().setPhone(phone);
