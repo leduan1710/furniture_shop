@@ -21,5 +21,5 @@ public interface ProductService {
 
     Optional<Product> findById(Integer productId);
 
-
+    Iterable<Product> getAll();
 }
