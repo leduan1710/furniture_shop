@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.Config.JwtService;
+import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
 import hcmute.it.furnitureshop.DTO.UpdateUserDTO;
 import hcmute.it.furnitureshop.Entity.*;
 import hcmute.it.furnitureshop.Service.*;
@@ -32,6 +33,8 @@ public class UserController {
     @Autowired
     ResponseReviewService responseReviewService;
 
+    @Autowired
+    OrderService orderService;
     @Autowired
     RatingService ratingService;
     public String getToken(){
@@ -200,5 +203,20 @@ public class UserController {
             return rating;
 
 
+    }
+
+    @PostMapping("/saveOrder/{productId}")
+    public void saveOrder(@RequestBody OrderRequestDTO orderRequest, @PathVariable("productId")Integer productId){
+        Order order=new Order();
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        Optional<Product> product=productService.findById(productId);
+        order.setUser(user.get());
+        order.setProduct(product.get());
+        order.setState("processing");
+        order.setDate(new Date());
+        order.setCount(orderRequest.getCount());
+        order.setPaid(orderRequest.getPaid());
+        order.setNowDelivery(orderRequest.getNowDelivery());
+        orderService.save(order);
     }
 }
