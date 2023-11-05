@@ -21,8 +21,8 @@ public class Order implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderId")
-    private Long orderId;
-    private Long count;
+    private Integer orderId;
+    private int count;
     private String state;
 
     @JsonBackReference
