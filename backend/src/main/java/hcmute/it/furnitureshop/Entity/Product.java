@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -54,6 +56,8 @@ public class Product implements Serializable {
     @Column(name="size",columnDefinition = "text")
     private String size;
 
+    private String status;
+
     @JsonManagedReference
     @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
     private List<Review> reviews;
@@ -77,5 +81,8 @@ public class Product implements Serializable {
 
     private int numberProductSold;
     private Date dateImport;
+
+    @OneToOne(mappedBy = "product")
+    private Banner banner;
 
 }
