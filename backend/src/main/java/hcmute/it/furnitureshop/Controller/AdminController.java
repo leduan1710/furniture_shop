@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,5 +35,10 @@ public class AdminController {
     @RequestMapping("/check")
     public ResponseEntity<String> sayHello(){
         return ResponseEntity.ok("Hello Admin");
+    }
+
+    @RequestMapping("/getUsers")
+    public List<User> getAll(){
+        return userService.getAll();
     }
 }

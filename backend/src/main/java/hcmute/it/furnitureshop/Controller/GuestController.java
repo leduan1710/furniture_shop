@@ -59,6 +59,11 @@ public class GuestController {
         return categoryService.getAll();
     }
 
+    @RequestMapping("/products")
+    public Iterable<Product> getAllProduct(){
+        return productService.getAll();
+    }
+
     @RequestMapping("/product/top8Product")
     public Iterable<Product> getTop8Product(){
         return productService.getTop8Product();
