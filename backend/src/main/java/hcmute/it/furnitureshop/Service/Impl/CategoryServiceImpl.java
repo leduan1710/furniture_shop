@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
-    CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository ;
 
     @Override
     public Iterable<Category> getCategoriesByRoom(Optional<Room> room) {

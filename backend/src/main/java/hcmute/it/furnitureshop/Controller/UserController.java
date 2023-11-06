@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
     @Autowired
     JwtService jwtService;
     @Autowired

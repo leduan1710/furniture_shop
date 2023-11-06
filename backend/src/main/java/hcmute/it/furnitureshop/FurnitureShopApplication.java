@@ -1,6 +1,4 @@
 package hcmute.it.furnitureshop;
-
-import hcmute.it.furnitureshop.Entity.Notification;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
