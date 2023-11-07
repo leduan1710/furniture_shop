@@ -1,17 +1,18 @@
 package hcmute.it.furnitureshop.Controller;
 
+import hcmute.it.furnitureshop.Config.VNPAYService;
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.Review;
 import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Service.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/guest")
@@ -139,7 +140,6 @@ public class GuestController {
             return false;
         }
     }
-
     @GetMapping("/reviewByProduct/{productId}")
     public Iterable<Review> findReviewsByProduct(@PathVariable("productId")Integer productId){
         Optional<Product> product=productService.findById(productId);
