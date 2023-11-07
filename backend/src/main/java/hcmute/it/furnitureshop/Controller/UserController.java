@@ -3,18 +3,16 @@ package hcmute.it.furnitureshop.Controller;
 import hcmute.it.furnitureshop.Config.JwtService;
 import hcmute.it.furnitureshop.Config.VNPAYService;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
+import hcmute.it.furnitureshop.DTO.ProductCheckOutDTO;
 import hcmute.it.furnitureshop.DTO.UpdateUserDTO;
 import hcmute.it.furnitureshop.Entity.*;
 import hcmute.it.furnitureshop.Service.*;
-import hcmute.it.furnitureshop.Service.Impl.UserServiceImpl;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -224,18 +222,9 @@ public class UserController {
         orderService.save(order);
     }
 
-    @GetMapping("/pay/{price}")
-    public String getPaymentUrl(@PathVariable("price") Long price) throws UnsupportedEncodingException {
-        return vnpayService.getPaymentUrl(price);
-    }
-    @GetMapping("payment-callback")
-    public void paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException {
-        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-        if ("00".equals(vnp_ResponseCode)) {
-            response.sendRedirect("http://localhost:3000/check-out");
-        } else {
-            response.sendRedirect("http://localhost:3000");
-
-        }
+    @PostMapping("/pay/{price}")
+    public String getPaymentUrl(@PathVariable("price") Long price, @RequestBody ProductCheckOutDTO productCheckOutDTO) throws UnsupportedEncodingException {
+        String token=jwtService.extractUserName(getToken());
+        return vnpayService.getPaymentUrl(price,productCheckOutDTO,token);
     }
 }

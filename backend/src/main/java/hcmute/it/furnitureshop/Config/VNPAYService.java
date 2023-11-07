@@ -1,6 +1,6 @@
 package hcmute.it.furnitureshop.Config;
 
-import jakarta.servlet.http.HttpServletResponse;
+import hcmute.it.furnitureshop.DTO.ProductCheckOutDTO;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +11,14 @@ import java.util.*;
 
 @Service
 public class VNPAYService {
-    public String getPaymentUrl(Long price) throws UnsupportedEncodingException {
+    public String ProductIds(ProductCheckOutDTO productCheckOutDTO){
+        String stringReturn="";
+        for(int i=0;i<productCheckOutDTO.getProductIds().size();i++){
+            stringReturn+=productCheckOutDTO.getProductIds().get(i).toString();
+        }
+        return stringReturn;
+    }
+    public String getPaymentUrl(Long price,ProductCheckOutDTO productCheckOutDTO,String token) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -36,7 +43,10 @@ public class VNPAYService {
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", VNPAYConfig.vnp_ReturnUrl);
+        vnp_Params.put("vnp_ReturnUrl", VNPAYConfig.vnp_ReturnUrl
+                +"?productIds="+productCheckOutDTO.getProductIds().toString().replace("[","").replace("]","")
+                +"&counts="+productCheckOutDTO.getCounts().toString().replace("[","").replace("]","")
+                +"&nameUser="+token + "&nowDelivery="+productCheckOutDTO.getNowDelivery().toString());
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
