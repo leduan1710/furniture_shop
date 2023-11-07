@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.Repository;
 
 import hcmute.it.furnitureshop.Entity.Category;
+import hcmute.it.furnitureshop.Entity.Order;
 import hcmute.it.furnitureshop.Entity.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
@@ -35,4 +36,6 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
 
     @Override
     Optional<Product> findById(Integer integer);
+
+    Optional<Product> findProductByOrder_OrderId(Integer orderId);
 }

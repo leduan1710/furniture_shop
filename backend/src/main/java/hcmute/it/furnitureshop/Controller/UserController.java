@@ -222,6 +222,15 @@ public class UserController {
         orderService.save(order);
     }
 
+    @GetMapping("/findOrdersByUser")
+    public Iterable<Order> findOrdersByUser(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        return orderService.findByUser(user.get());
+    }
+    @GetMapping("/findProductByOrderId/{orderId}")
+    public Optional<Product> findProductByOrderId(@PathVariable("orderId")Integer orderId){
+        return productService.findProductByOrderId(orderId);
+    }
     @PostMapping("/pay/{price}")
     public String getPaymentUrl(@PathVariable("price") Long price, @RequestBody ProductCheckOutDTO productCheckOutDTO) throws UnsupportedEncodingException {
         String token=jwtService.extractUserName(getToken());

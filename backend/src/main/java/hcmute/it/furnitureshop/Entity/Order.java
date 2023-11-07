@@ -30,8 +30,13 @@ public class Order implements Serializable{
     @JoinColumn(name = "userId")
     private User user;
 
-    @JsonBackReference
+    @JsonManagedReference
     @ManyToOne
+    @JoinColumn(name = "codeId")
+    private Code code;
+
+    @JsonBackReference
+    @OneToOne
     @JoinColumn(name = "productId")
     private Product product;
 
