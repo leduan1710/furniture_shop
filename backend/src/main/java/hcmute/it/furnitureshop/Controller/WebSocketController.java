@@ -13,10 +13,18 @@ import java.util.Date;
 @Controller
 @CrossOrigin( origins = "*" , allowedHeaders = "*")
 public class WebSocketController {
-    @MessageMapping("/chat")
-    @SendTo("/topic/messages")
-    public MessageDTO chatMessage(@Payload MessageDTO messageDTO){
+    @MessageMapping("/chat/UserToAdmin")
+    @SendTo("/topic/messages/UserToAdmin")
+    public MessageDTO chatMessageUserToAdmin(@Payload MessageDTO messageDTO){
         messageDTO.setTimestamp(new Date());
+        return messageDTO;
+    }
+
+    @MessageMapping("/chat/AdminToUser")
+    @SendTo("/topic/messages/AdminToUser")
+    public MessageDTO chatMessageAdminToUser(@Payload MessageDTO messageDTO){
+        messageDTO.setTimestamp(new Date());
+        messageDTO.setNickname("Admin");
         return messageDTO;
     }
 }
