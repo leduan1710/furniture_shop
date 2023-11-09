@@ -13,6 +13,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/guest")
+@CrossOrigin( origins = "*" , allowedHeaders = "*")
 public class GuestController {
     @Autowired
     RoomService roomService;

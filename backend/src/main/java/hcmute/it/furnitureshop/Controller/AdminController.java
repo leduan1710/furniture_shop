@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin( origins = "*" , allowedHeaders = "*")
 public class AdminController {
     @Autowired
     UserService userService;
