@@ -228,6 +228,54 @@ public class UserController {
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
         return orderService.findByUser(user.get());
     }
+    @GetMapping("/findOrdersByUserProcessing")
+    public Iterable<Order> findOrdersByUserProcessing(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("processing")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findOrdersByUserProcessed")
+    public Iterable<Order> findOrdersByUserProcessed(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("processed")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findOrdersByUserCanceled")
+    public Iterable<Order> findOrdersByUserCanceled(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("canceled")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findOrdersByUserDelivered")
+    public Iterable<Order> findOrdersByUserDelivered(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("delivered")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
     @GetMapping("/findProductByOrderId/{orderId}")
     public Optional<Product> findProductByOrderId(@PathVariable("orderId")Integer orderId){
         return productService.findProductByOrderId(orderId);

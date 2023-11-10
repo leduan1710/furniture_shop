@@ -36,11 +36,13 @@ public class Order implements Serializable{
     private Code code;
 
     @JsonBackReference
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
 
     private Date date;
+
+    private Date dateUpdate;
 
     private Boolean paid;
 
