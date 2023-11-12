@@ -5,7 +5,7 @@ import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -37,8 +37,15 @@ public class AdminController {
         return ResponseEntity.ok("Hello Admin");
     }
 
+    //User
     @RequestMapping("/getUsers")
     public List<User> getAll(){
         return userService.getAll();
     }
+
+    @RequestMapping("/getUserById/{userId}")
+    public Optional<User> getUserById(@PathVariable("userId") Integer userId){
+        return userService.findById(userId);
+    }
+    //
 }
