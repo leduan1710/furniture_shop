@@ -1,25 +1,24 @@
 package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.Config.JwtService;
+import hcmute.it.furnitureshop.Config.VNPAYService;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
+import hcmute.it.furnitureshop.DTO.ProductCheckOutDTO;
 import hcmute.it.furnitureshop.DTO.UpdateUserDTO;
 import hcmute.it.furnitureshop.Entity.*;
 import hcmute.it.furnitureshop.Service.*;
-import hcmute.it.furnitureshop.Service.Impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Optional;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin( origins = "*" , allowedHeaders = "*")
 public class UserController {
     @Autowired
     UserService userService;
@@ -38,6 +37,8 @@ public class UserController {
     OrderService orderService;
     @Autowired
     RatingService ratingService;
+    @Autowired
+    VNPAYService vnpayService;
     public String getToken(){
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest()
@@ -220,5 +221,68 @@ public class UserController {
         order.setPaid(orderRequest.getPaid());
         order.setNowDelivery(orderRequest.getNowDelivery());
         orderService.save(order);
+    }
+
+    @GetMapping("/findOrdersByUser")
+    public Iterable<Order> findOrdersByUser(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        return orderService.findByUser(user.get());
+    }
+    @GetMapping("/findOrdersByUserProcessing")
+    public Iterable<Order> findOrdersByUserProcessing(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("processing")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findOrdersByUserProcessed")
+    public Iterable<Order> findOrdersByUserProcessed(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("processed")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findOrdersByUserCanceled")
+    public Iterable<Order> findOrdersByUserCanceled(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("canceled")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findOrdersByUserDelivered")
+    public Iterable<Order> findOrdersByUserDelivered(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        ArrayList<Order> orders=new ArrayList<>();
+        Iterable<Order> listOrders=orderService.findByUser(user.get());
+        listOrders.forEach(order -> {
+            if(order.getState().equals("delivered")){
+                orders.add(order);
+            }
+        });
+        return orders;
+    }
+    @GetMapping("/findProductByOrderId/{orderId}")
+    public Optional<Product> findProductByOrderId(@PathVariable("orderId")Integer orderId){
+        return productService.findProductByOrderId(orderId);
+    }
+    @PostMapping("/pay/{price}")
+    public String getPaymentUrl(@PathVariable("price") Long price, @RequestBody ProductCheckOutDTO productCheckOutDTO) throws UnsupportedEncodingException {
+        String token=jwtService.extractUserName(getToken());
+        return vnpayService.getPaymentUrl(price,productCheckOutDTO,token);
     }
 }

@@ -73,5 +73,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll();
     }
 
+    @Override
+    public Optional<Product> findProductByOrderId(Integer orderId) {
+        return productRepository.findProductByOrder_OrderId(orderId);
+    }
+
 
 }

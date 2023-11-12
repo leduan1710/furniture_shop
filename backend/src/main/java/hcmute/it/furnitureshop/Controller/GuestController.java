@@ -1,20 +1,19 @@
 package hcmute.it.furnitureshop.Controller;
 
-import hcmute.it.furnitureshop.Entity.Category;
-import hcmute.it.furnitureshop.Entity.Product;
-import hcmute.it.furnitureshop.Entity.Review;
-import hcmute.it.furnitureshop.Entity.Room;
+import hcmute.it.furnitureshop.Config.VNPAYService;
+import hcmute.it.furnitureshop.Entity.*;
 import hcmute.it.furnitureshop.Service.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/guest")
+@CrossOrigin( origins = "*" , allowedHeaders = "*")
 public class GuestController {
     @Autowired
     RoomService roomService;
@@ -27,6 +26,9 @@ public class GuestController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    OrderService orderService;
 
     @Autowired
     ReviewService reviewService;
@@ -139,11 +141,40 @@ public class GuestController {
             return false;
         }
     }
-
     @GetMapping("/reviewByProduct/{productId}")
     public Iterable<Review> findReviewsByProduct(@PathVariable("productId")Integer productId){
         Optional<Product> product=productService.findById(productId);
         return reviewService.findByProduct(product.get());
+    }
+
+    @GetMapping("/payment-callback")
+    public void paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException {
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String stringProductIds = queryParams.get("productIds");
+        String nameUser = queryParams.get("nameUser");
+        String nowDelivery = queryParams.get("nowDelivery");
+        String stringCounts = queryParams.get("counts");
+        List<String> listStringProductIds = new ArrayList<String>(Arrays.asList(stringProductIds.split(",")));
+        List<String> listCounts = new ArrayList<String>(Arrays.asList(stringCounts.split(",")));
+        if ("00".equals(vnp_ResponseCode)) {
+            for(int i=0;i<listStringProductIds.size();i++){
+                Order order=new Order();
+                Optional<User> user=userService.findByName(nameUser);
+                Optional<Product> product= productService.findById(Integer.valueOf(listStringProductIds.get(i).replace(" ","")));
+                order.setUser(user.get());
+                order.setProduct(product.get());
+                order.setState("processing");
+                order.setDate(new Date());
+                order.setCount(Integer.parseInt(listCounts.get(i).replace(" ","")));
+                order.setPaid(true);
+                order.setNowDelivery(Boolean.valueOf(nowDelivery));
+                orderService.save(order);
+            }
+            response.sendRedirect("http://localhost:3000/checkout/success");
+        } else {
+            response.sendRedirect("http://localhost:3000/checkout/fail");
+
+        }
     }
 
 }

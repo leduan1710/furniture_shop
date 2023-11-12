@@ -15,8 +15,6 @@ import java.util.Optional;
 class UserServiceImplTest extends TestCase {
     @Autowired
     UserService userService;
-    @Autowired
-    UserRepository userRepository;
     @BeforeEach
     protected void setUp() throws Exception {
         System.out.println("Setup");

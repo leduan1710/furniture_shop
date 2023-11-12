@@ -71,8 +71,8 @@ public class Product implements Serializable {
     private List<Favorite> favorites;
 
     @JsonManagedReference
-    @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
-    private List<Order> orders;
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+    private List<Order> order;
 
     @JsonManagedReference
     @ManyToOne
