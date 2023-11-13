@@ -41,6 +41,7 @@ public class CategoryServiceImplTest{
         listCate.add(category3.get());
         //
         when(categoryRepository.findById(1)).thenReturn(findCateById());
+        //
         Optional<Category> category=categoryServiceImpl.findById(1);
         assertEquals("cate1",category.get().getName());
     }

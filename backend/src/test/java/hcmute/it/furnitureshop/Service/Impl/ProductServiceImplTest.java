@@ -31,8 +31,6 @@ public class ProductServiceImplTest {
     Optional<Product> product3 = Optional.of(new Product());
     ArrayList<Product> products=new ArrayList<>();
 
-
-
     @Test
     public void getProductById() {
         //create data
@@ -49,7 +47,7 @@ public class ProductServiceImplTest {
         when(productRepository.findById(1)).thenReturn(findProductById());
         //
         Optional<Product> product=productServiceImpl.findById(1);
-        assertEquals("sofa product",product.get().getName());
+        assertEquals("sofa produc",product.get().getName());
     }
     private Optional<Product> findProductById() {
         for(int i=0;i<products.size();i++){

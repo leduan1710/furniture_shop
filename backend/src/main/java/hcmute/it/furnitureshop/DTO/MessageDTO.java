@@ -14,4 +14,6 @@ public class MessageDTO {
     private String nickname;
     private String content;
     private Date timestamp;
+    private String userId;
+    private String userImage;
 }
