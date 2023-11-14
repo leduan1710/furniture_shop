@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,10 @@ public class Notification {
     @JoinColumn(name = "userId")
     private User user;
 
+    @JsonManagedReference
+    @OneToOne
+    @JoinColumn(name = "orderId")
+    private Order order;
     private Date date;
 
     private String description;

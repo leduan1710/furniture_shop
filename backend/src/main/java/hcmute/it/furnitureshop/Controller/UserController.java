@@ -32,13 +32,14 @@ public class UserController {
     ReviewService reviewService;
     @Autowired
     ResponseReviewService responseReviewService;
-
     @Autowired
     OrderService orderService;
     @Autowired
     RatingService ratingService;
     @Autowired
     VNPAYService vnpayService;
+    @Autowired
+    NotificationService notificationService;
     public String getToken(){
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest()
@@ -220,7 +221,17 @@ public class UserController {
         order.setCount(orderRequest.getCount());
         order.setPaid(orderRequest.getPaid());
         order.setNowDelivery(orderRequest.getNowDelivery());
+        ///
+        Notification notification=new Notification();
+        notification.setState(false);
+        notification.setDescription("Đặt hàng thành công");
+        notification.setUser(user.get());
+        notification.setDate(new Date());
+        order.setNotification(notification);
         orderService.save(order);
+        notification.setOrder(order);
+        notificationService.saveNotification(notification);
+
     }
 
     @GetMapping("/findOrdersByUser")
@@ -284,5 +295,18 @@ public class UserController {
     public String getPaymentUrl(@PathVariable("price") Long price, @RequestBody ProductCheckOutDTO productCheckOutDTO) throws UnsupportedEncodingException {
         String token=jwtService.extractUserName(getToken());
         return vnpayService.getPaymentUrl(price,productCheckOutDTO,token);
+    }
+
+    @GetMapping("/getNotification")
+    public Iterable<Notification> getNotificationByUser(){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        return notificationService.findByUser(user.get());
+    }
+
+    @PostMapping("/checkNotification/{notificationId}")
+    public void saveNotificationByUser(@PathVariable("notificationId")Integer notificationId){
+        Optional<Notification> notification=notificationService.findById(notificationId);
+        notification.get().setState(true);
+        notificationService.saveNotification(notification.get());
     }
 }
