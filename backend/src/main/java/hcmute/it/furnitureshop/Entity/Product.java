@@ -3,14 +3,13 @@ package hcmute.it.furnitureshop.Entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+
 
 @Data
 @NoArgsConstructor
@@ -34,7 +33,7 @@ public class Product implements Serializable {
     @Column(name = "price", columnDefinition = "int not null")
     private long price;
 
-
+    @Min(value =0)
     @Column(name = "quantity", columnDefinition = "int not null")
     private long quantity;
 

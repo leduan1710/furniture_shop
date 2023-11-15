@@ -78,5 +78,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductByOrder_OrderId(orderId);
     }
 
+    @Override
+    public <S extends Product> void save(Product product) {
+        productRepository.save(product);
+    }
+
 
 }

@@ -42,8 +42,8 @@ public class Order implements Serializable{
     private Product product;
 
     @JsonBackReference
-    @OneToOne(mappedBy="order",cascade = CascadeType.ALL)
-    private Notification notification;
+    @OneToMany(mappedBy="order",cascade = CascadeType.ALL)
+    private List<Notification> notification;
 
     private Date date;
 

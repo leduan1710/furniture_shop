@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NotificationRepository extends CrudRepository<Notification,Integer> {
-    public Iterable<Notification> findNotificationsByUser(User user);
+    public Iterable<Notification> findNotificationsByUserOrderByDateDesc(User user);
 }

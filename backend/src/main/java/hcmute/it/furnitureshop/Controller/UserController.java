@@ -210,30 +210,41 @@ public class UserController {
     }
 
     @PostMapping("/saveOrder/{productId}")
-    public void saveOrder(@RequestBody OrderRequestDTO orderRequest, @PathVariable("productId")Integer productId){
-        Order order=new Order();
-        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        Optional<Product> product=productService.findById(productId);
-        order.setUser(user.get());
-        order.setProduct(product.get());
-        order.setState("processing");
-        order.setDate(new Date());
-        order.setCount(orderRequest.getCount());
-        order.setPaid(orderRequest.getPaid());
-        order.setNowDelivery(orderRequest.getNowDelivery());
-        ///
-        Notification notification=new Notification();
-        notification.setState(false);
-        notification.setDescription("Đặt hàng thành công");
-        notification.setUser(user.get());
-        notification.setDate(new Date());
-        order.setNotification(notification);
-        orderService.save(order);
-        notification.setOrder(order);
-        notificationService.saveNotification(notification);
+    public ResponseEntity<String> saveOrder(@RequestBody OrderRequestDTO orderRequest, @PathVariable("productId")Integer productId){
+        try{
+            Order order=new Order();
+            Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+            Optional<Product> product=productService.findById(productId);
+            order.setUser(user.get());
+            order.setProduct(product.get());
+            order.setState("processing");
+            order.setDate(new Date());
+            order.setCount(orderRequest.getCount());
+            order.setPaid(orderRequest.getPaid());
+            order.setNowDelivery(orderRequest.getNowDelivery());
+            ///
+            Notification notification=new Notification();
+            notification.setState(false);
+            notification.setDescription("Đặt hàng thành công");
+            notification.setUser(user.get());
+            notification.setDate(new Date());
+            List<Notification> notifications=new ArrayList<>();
+            notifications.add(notification);
+            //// trừ số lượng khi đặt hàng
+            product.get().setQuantity(product.get().getQuantity()-orderRequest.getCount());
+            productService.save(product.get());
+            //
+            order.setNotification(notifications);
+            orderService.save(order);
+            notification.setOrder(order);
+            notificationService.saveNotification(notification);
+            return  ResponseEntity.status(204).body("Đặt hàng thành công");
+        }catch (Exception e){
+            return ResponseEntity.status(200).body("Hết hàng");
+        }
+
 
     }
-
     @GetMapping("/findOrdersByUser")
     public Iterable<Order> findOrdersByUser(){
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
@@ -308,5 +319,61 @@ public class UserController {
         Optional<Notification> notification=notificationService.findById(notificationId);
         notification.get().setState(true);
         notificationService.saveNotification(notification.get());
+    }
+    @PostMapping("/canceledOrder/{orderId}")
+    public void canceledOrder(@PathVariable("orderId")Integer orderId){
+        Optional<Order> order=orderService.findById(orderId);
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        order.get().setState("canceled");
+        ///
+        Notification notification=new Notification();
+        notification.setState(false);
+        notification.setDescription("Huỷ đơn hàng thành công");
+        notification.setUser(user.get());
+        notification.setDate(new Date());
+        //
+        List<Notification> notifications=order.get().getNotification();
+        notifications.add(notification);
+        order.get().setNotification(notifications);
+        //
+        orderService.save(order.get());
+        notification.setOrder(order.get());
+        notificationService.saveNotification(notification);
+        //// cộng số lượng khi huỷ
+        Product product= order.get().getProduct();
+        product.setQuantity(product.getQuantity()+order.get().getCount());
+        productService.save(product);
+    }
+    @PostMapping("/restoredOrder/{orderId}")
+    public ResponseEntity<String> restoredOrder(@PathVariable("orderId")Integer orderId){
+        try{
+            Optional<Order> order=orderService.findById(orderId);
+            Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+            order.get().setState("processing");
+            order.get().setDate(new Date());
+            ///
+            Notification notification=new Notification();
+            notification.setState(false);
+            notification.setDescription("Đặt lại đơn hàng thành công");
+            notification.setUser(user.get());
+            notification.setDate(new Date());
+            //
+            List<Notification> notifications=order.get().getNotification();
+            notifications.add(notification);
+            order.get().setNotification(notifications);
+            //
+            orderService.save(order.get());
+            notification.setOrder(order.get());
+            notificationService.saveNotification(notification);
+            //// cộng số lượng khi huỷ
+            Product product= order.get().getProduct();
+            product.setQuantity(product.getQuantity()-order.get().getCount());
+            productService.save(product);
+            return ResponseEntity.status(204).body("Đặt hàng thành công");
+        }catch (Exception e){
+            return ResponseEntity.status(200).body("Hết hàng");
+        }
+
+
     }
 }
