@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends CrudRepository<Order,Integer> {
-    public Iterable<Order> findOrdersByUser(User user);
+    public Iterable<Order> findOrdersByUserOrderByDateDesc(User user);
 }

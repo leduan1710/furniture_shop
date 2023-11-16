@@ -23,7 +23,7 @@ public class Notification {
     private User user;
 
     @JsonManagedReference
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "orderId")
     private Order order;
     private Date date;

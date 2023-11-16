@@ -26,7 +26,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Iterable<Order> findByUser(User user) {
-        return orderRepository.findOrdersByUser(user);
+        return orderRepository.findOrdersByUserOrderByDateDesc(user);
+    }
+
+    @Override
+    public Optional<Order> findById(Integer orderId) {
+        return orderRepository.findById(orderId);
     }
 
 

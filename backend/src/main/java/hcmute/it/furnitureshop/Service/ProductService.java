@@ -24,4 +24,5 @@ public interface ProductService {
     Iterable<Product> getAll();
 
     Optional<Product> findProductByOrderId(Integer orderId);
+    public <S extends Product> void save(Product product);
 }

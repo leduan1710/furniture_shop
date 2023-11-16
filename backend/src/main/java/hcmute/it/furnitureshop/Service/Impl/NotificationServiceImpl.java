@@ -23,7 +23,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Iterable<Notification> findByUser(User user) {
-        return notificationRepository.findNotificationsByUser(user);
+        return notificationRepository.findNotificationsByUserOrderByDateDesc(user);
     }
 
     @Override

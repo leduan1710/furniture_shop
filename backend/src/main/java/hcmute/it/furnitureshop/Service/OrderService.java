@@ -9,4 +9,5 @@ public interface OrderService {
     public <S extends Order> void save(Order order);
 
     public Iterable<Order> findByUser(User user);
+    public Optional<Order> findById(Integer orderId);
 }
