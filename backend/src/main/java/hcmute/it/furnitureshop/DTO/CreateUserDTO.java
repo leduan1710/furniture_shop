@@ -1,4 +1,4 @@
-package hcmute.it.furnitureshop.Auth;
+package hcmute.it.furnitureshop.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private String name;
-    public String username;
-    private String password;
+public class CreateUserDTO {
+    private String fullname;
     private String phone;
+    private String password;
+    private String address;
 }
