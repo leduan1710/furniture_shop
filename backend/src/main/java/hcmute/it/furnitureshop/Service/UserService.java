@@ -12,9 +12,9 @@ public interface UserService {
     public Optional<User> findByName(String name);
     public <S extends User> void savePhoneOfUser(User user);
     public <S extends User> void saveUser(User user);
-
     public Optional<User> findByPhone(String phone);
-
     public Optional<User> findById(Integer userId);
-    public  User createUser(CreateUserDTO request);
+    public User createUser(CreateUserDTO request);
+    public void deleteUser(Integer userId);
+    public String updateStatusUser(Integer userId);
 }

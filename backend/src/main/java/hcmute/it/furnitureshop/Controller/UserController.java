@@ -262,6 +262,7 @@ public class UserController {
         });
         return orders;
     }
+
     @GetMapping("/findOrdersByUserProcessed")
     public Iterable<Order> findOrdersByUserProcessed(){
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
@@ -274,6 +275,7 @@ public class UserController {
         });
         return orders;
     }
+
     @GetMapping("/findOrdersByUserCanceled")
     public Iterable<Order> findOrdersByUserCanceled(){
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
@@ -286,6 +288,7 @@ public class UserController {
         });
         return orders;
     }
+
     @GetMapping("/findOrdersByUserDelivered")
     public Iterable<Order> findOrdersByUserDelivered(){
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
@@ -298,10 +301,12 @@ public class UserController {
         });
         return orders;
     }
+
     @GetMapping("/findProductByOrderId/{orderId}")
     public Optional<Product> findProductByOrderId(@PathVariable("orderId")Integer orderId){
         return productService.findProductByOrderId(orderId);
     }
+
     @PostMapping("/pay/{price}")
     public String getPaymentUrl(@PathVariable("price") Long price, @RequestBody ProductCheckOutDTO productCheckOutDTO) throws UnsupportedEncodingException {
         String token=jwtService.extractUserName(getToken());
@@ -344,6 +349,7 @@ public class UserController {
         product.setQuantity(product.getQuantity()+order.get().getCount());
         productService.save(product);
     }
+
     @PostMapping("/restoredOrder/{orderId}")
     public ResponseEntity<String> restoredOrder(@PathVariable("orderId")Integer orderId){
         try{

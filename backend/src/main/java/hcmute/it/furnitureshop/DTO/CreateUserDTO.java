@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class CreateUserDTO {
     private String fullname;
     private String phone;
+    private String image;
     private String password;
     private String address;
 }

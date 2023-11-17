@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private String address;
     private Date createDate;
     private String phone;
+    private String status;
     @Enumerated(EnumType.STRING)
     private RoleEnum role = RoleEnum.USER;
 

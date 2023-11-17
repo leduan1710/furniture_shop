@@ -33,7 +33,6 @@ class UserServiceImplTest extends TestCase {
     @BeforeAll
     static void beforeAll() {
         System.out.println("start");
-
     }
 
     @Test

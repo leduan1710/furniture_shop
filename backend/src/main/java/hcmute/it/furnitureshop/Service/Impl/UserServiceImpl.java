@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,7 +47,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
     @Override
     public Optional<User> findByPhone(String phone) {
         return userRepository.findByPhone(phone);
@@ -59,15 +59,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(CreateUserDTO request){
-        var user = User.builder().name(request.getFullname())
-                .username(request.getPhone())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .phone(request.getPhone())
-                .createDate(new Date())
-                .image("https://frontend.tikicdn.com/_desktop-next/static/img/account/avatar.png")
-                .role(RoleEnum.USER)
-                .build();
-        userRepository.save(user);
-        return user;
+        if (userRepository.findByPhone(request.getPhone()).isEmpty())
+        {
+            var user = User.builder().name(request.getFullname())
+                    .username(request.getPhone())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .phone(request.getPhone())
+                    .createDate(new Date())
+                    .image(request.getImage())
+                    .role(RoleEnum.USER)
+                    .status("active")
+                    .build();
+            userRepository.save(user);
+            return user;
+        }
+        else return null;
+    }
+
+    @Override
+    public String updateStatusUser(Integer userId)
+    {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent())
+        {
+            if (Objects.equals(user.get().getStatus(), "active"))
+                user.get().setStatus("inactive");
+            else user.get().setStatus("active");
+            userRepository.save(user.get());
+            return "Update status thành công";
+        }
+        else return "Không tồn tại user trong hệ thống";
+    }
+
+    @Override
+    public void deleteUser(Integer userId){
+        userRepository.deleteById(userId);
     }
 }

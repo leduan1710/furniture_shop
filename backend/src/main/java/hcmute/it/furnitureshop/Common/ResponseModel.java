@@ -5,14 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.lang.reflect.Type;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseModel<T> {
-    private T object;
+    private T object =  null;
     private String status;
     private String message;
 }

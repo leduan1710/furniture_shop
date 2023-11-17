@@ -29,7 +29,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ){
-        if(!userService.findByName(request.getUsername()).isPresent()){
+        if(userService.findByName(request.getUsername()).isEmpty()){
             request.setPhone(request.getUsername());
             return ResponseEntity.ok(authenticationService.register(request));
         }
@@ -70,7 +70,6 @@ public class AuthenticationController {
             return ResponseEntity.status(201).body(authenticationService.register(registerRequest));
         }else{
             return ResponseEntity.ok(authenticationService.authenticate(request));
-
         }
     }
 

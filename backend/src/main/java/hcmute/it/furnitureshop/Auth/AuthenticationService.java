@@ -30,6 +30,7 @@ public class AuthenticationService {
                 .createDate(new Date())
                 .image("https://frontend.tikicdn.com/_desktop-next/static/img/account/avatar.png")
                 .role(RoleEnum.USER)
+                .status("active")
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
