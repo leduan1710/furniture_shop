@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.DTO;
 
+import hcmute.it.furnitureshop.Common.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,10 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserDTO {
+public class UserDTO {
+    private Integer userId;
     private String name;
+    private String username;
     private String phone;
     private String image;
-    private String password;
+    private String status;
     private String address;
+    private String role;
 }

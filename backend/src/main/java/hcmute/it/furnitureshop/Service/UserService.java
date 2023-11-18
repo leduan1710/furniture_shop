@@ -2,6 +2,7 @@ package hcmute.it.furnitureshop.Service;
 
 import hcmute.it.furnitureshop.Auth.RegisterRequest;
 import hcmute.it.furnitureshop.DTO.CreateUserDTO;
+import hcmute.it.furnitureshop.DTO.UserDTO;
 import hcmute.it.furnitureshop.Entity.User;
 
 import java.util.List;
@@ -14,7 +15,8 @@ public interface UserService {
     public <S extends User> void saveUser(User user);
     public Optional<User> findByPhone(String phone);
     public Optional<User> findById(Integer userId);
+    public UserDTO getById(Integer userId);
     public User createUser(CreateUserDTO request);
-    public void deleteUser(Integer userId);
+    public String deleteUser(Integer userId);
     public String updateStatusUser(Integer userId);
 }

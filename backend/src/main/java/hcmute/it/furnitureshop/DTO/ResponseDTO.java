@@ -1,4 +1,4 @@
-package hcmute.it.furnitureshop.Common;
+package hcmute.it.furnitureshop.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseModel<T> {
+public class ResponseDTO<T> {
     private T object =  null;
     private String status;
     private String message;

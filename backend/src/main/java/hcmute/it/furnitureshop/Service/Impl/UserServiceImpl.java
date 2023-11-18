@@ -3,6 +3,7 @@ package hcmute.it.furnitureshop.Service.Impl;
 import hcmute.it.furnitureshop.Auth.RegisterRequest;
 import hcmute.it.furnitureshop.Common.RoleEnum;
 import hcmute.it.furnitureshop.DTO.CreateUserDTO;
+import hcmute.it.furnitureshop.DTO.UserDTO;
 import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Repository.UserRepository;
 import hcmute.it.furnitureshop.Service.UserService;
@@ -58,10 +59,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getById(Integer userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.map(value -> UserDTO.builder()
+                .userId(value.getUserId())
+                .name(value.getName())
+                .phone(value.getPhone())
+                .username(value.getUsername())
+                .address(value.getAddress())
+                .status(value.getStatus())
+                .image(value.getImage())
+                .role(String.valueOf(value.getRole()))
+                .build()).orElse(null);
+    }
+
+    @Override
     public User createUser(CreateUserDTO request){
         if (userRepository.findByPhone(request.getPhone()).isEmpty())
         {
-            var user = User.builder().name(request.getFullname())
+            var user = User.builder().name(request.getName())
                     .username(request.getPhone())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .phone(request.getPhone())
@@ -92,7 +108,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Integer userId){
-        userRepository.deleteById(userId);
+    public String deleteUser(Integer userId){
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            userRepository.deleteById(userId);
+            return "Xóa người dùng thành công";
+        }else return "Không tồn tại người dùng trong hệ thống";
     }
 }

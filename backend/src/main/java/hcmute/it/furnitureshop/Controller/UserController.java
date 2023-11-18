@@ -50,7 +50,6 @@ public class UserController {
     @RequestMapping("/findByName")
     public Optional<User> findByName(){
         return userService.findByName(jwtService.extractUserName(getToken()));
-
     }
     @RequestMapping("/check")
 

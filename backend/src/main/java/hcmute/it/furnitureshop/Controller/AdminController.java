@@ -1,13 +1,12 @@
 package hcmute.it.furnitureshop.Controller;
 
-import hcmute.it.furnitureshop.Common.ResponseModel;
+import hcmute.it.furnitureshop.DTO.ResponseDTO;
 import hcmute.it.furnitureshop.Config.JwtService;
 import hcmute.it.furnitureshop.DTO.CreateUserDTO;
-import hcmute.it.furnitureshop.DTO.UpdateUserDTO;
+import hcmute.it.furnitureshop.DTO.UserDTO;
 import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -47,34 +46,37 @@ public class AdminController {
     }
 
     @RequestMapping("/getUserById/{userId}")
-    public Optional<User> getUserById(@PathVariable("userId") Integer userId){
-        return userService.findById(userId);
+    public ResponseDTO<UserDTO> getUserById(@PathVariable("userId") Integer userId){
+        UserDTO userDTO = userService.getById(userId);
+        if(userDTO != null){
+            return new ResponseDTO<>(userDTO, "Ok", "Lấy thông tin người dùng thành công");
+        }
+        else{
+            return new ResponseDTO<>(null, "Fail", "Không tồn tại người dùng");
+        }
     }
 
     @PostMapping("/createUser")
-    public ResponseModel<User> createUser(@RequestBody CreateUserDTO createUserDTO){
-        if(userService.findByName(createUserDTO.getPhone()).isEmpty()){
-            return new ResponseModel<>(userService.createUser(createUserDTO), "Ok", "success");
+    public ResponseDTO<?> createUser(@RequestBody CreateUserDTO createUserDTO){
+        User user = userService.createUser(createUserDTO);
+        if(user != null){
+            return new ResponseDTO<>(userService.createUser(createUserDTO), "Ok", "Thêm người dùng thành công");
         }
         else{
-            return new ResponseModel<>(null, "Fail", "Đã tồn tại user trong hệ thống");
+            return new ResponseDTO<>(null, "Fail", "Thêm người dùng thất bại ! Đã tồn tại user trong hệ thống");
         }
     }
 
     @PostMapping("/updateUserStatus/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable("userId") Integer userId){
+    public ResponseDTO<?> updateUser(@PathVariable("userId") Integer userId){
         String message = userService.updateStatusUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        return new ResponseDTO<>(null, "Ok", message);
     }
 
     @RequestMapping("/deleteUser/{userId}")
-    public String deleteUser(@PathVariable("userId") Integer userId){
-        if(userService.findById(userId).isPresent())
-        {
-            userService.deleteUser(userId);
-            return "Xóa user thành công";
-        }
-        else return "Không tồn tại";
+    public ResponseDTO<?> deleteUser(@PathVariable("userId") Integer userId){
+        String message = userService.deleteUser(userId);
+        return new ResponseDTO<>(null, "Ok", message);
     }
     //
 }
