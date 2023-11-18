@@ -1,7 +1,7 @@
 package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.Config.JwtService;
-import hcmute.it.furnitureshop.Config.VNPAYService;
+import hcmute.it.furnitureshop.Service.VNPAYService;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
 import hcmute.it.furnitureshop.DTO.ProductCheckOutDTO;
 import hcmute.it.furnitureshop.DTO.UpdateUserDTO;
