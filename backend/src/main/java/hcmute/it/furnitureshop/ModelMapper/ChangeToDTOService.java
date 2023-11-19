@@ -1,13 +1,7 @@
 package hcmute.it.furnitureshop.ModelMapper;
 
-import hcmute.it.furnitureshop.DTO.CategoryDTO;
-import hcmute.it.furnitureshop.DTO.FavoriteDTO;
-import hcmute.it.furnitureshop.DTO.ProductDTO;
-import hcmute.it.furnitureshop.DTO.ReviewDTO;
-import hcmute.it.furnitureshop.Entity.Category;
-import hcmute.it.furnitureshop.Entity.Favorite;
-import hcmute.it.furnitureshop.Entity.Product;
-import hcmute.it.furnitureshop.Entity.Review;
+import hcmute.it.furnitureshop.DTO.*;
+import hcmute.it.furnitureshop.Entity.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +14,21 @@ import java.util.Optional;
 public class ChangeToDTOService {
     @Autowired
     ModelMapper modelMapper;
+    public UserDTO changeUserToDTO(Optional<User> user){
+        UserDTO userDTO=new UserDTO();
+        if(user.isPresent()){
+            userDTO = modelMapper.map(user.get(),UserDTO.class);
+        }
+        return userDTO;
+    }
+    public ArrayList<OrderDTO> changeListOrderToDTO(Iterable<Order> orders){
+        ArrayList<OrderDTO> orderDTOS = new ArrayList<>();
+        orders.forEach(order -> {
+            OrderDTO orderDTO=modelMapper.map(order,OrderDTO.class);
+            orderDTOS.add(orderDTO);
+        });
+        return orderDTOS;
+    }
     public ArrayList<CategoryDTO> changeListCategoryToDTO(Iterable<Category> categories){
         ArrayList<CategoryDTO> categoryDTOS=new ArrayList<>();
         categories.forEach(category->{
@@ -46,6 +55,18 @@ public class ChangeToDTOService {
         return categoryDTO;
     }
 
+    public RatingDTO changeRatingToDTO(Optional<Rating> ratingCurrent){
+        if(ratingCurrent.isPresent()){
+            Rating rating = ratingCurrent.get();
+            RatingDTO ratingDTO=new RatingDTO();
+            ratingDTO.setRatingId(rating.getRatingId());
+            ratingDTO.setProductId(rating.getProduct().getProductId());
+            ratingDTO.setUserId(rating.getUser().getUserId());
+            ratingDTO.setPoint(rating.getPoint());
+            return ratingDTO;
+        }
+        return new RatingDTO();
+    }
     public ArrayList<FavoriteDTO> changeListFavoriteToDTO(Iterable<Favorite> favorites){
         ArrayList<FavoriteDTO> favoriteDTOS=new ArrayList<>();
         favorites.forEach(favorite -> {
@@ -70,5 +91,20 @@ public class ChangeToDTOService {
             reviewDTOS.add(reviewDTO);
         });
         return  reviewDTOS;
+    }
+
+    public ArrayList<ResponseReviewDTO> changeListResponseReviewToDTO(Iterable<ResponseReview> responseReviews){
+        ArrayList<ResponseReviewDTO> responseReviewDTOS=new ArrayList<>();
+        responseReviews.forEach(responseReview -> {
+            ResponseReviewDTO responseReviewDTO=new ResponseReviewDTO();
+            responseReviewDTO.setResponseReviewId(responseReview.getResponseReviewId());
+            responseReviewDTO.setDate(responseReview.getDate());
+            responseReviewDTO.setContent(responseReview.getContent());
+            responseReviewDTO.setName(responseReview.getUser().getName());
+            responseReviewDTO.setUserId(responseReview.getUser().getUserId());
+            responseReviewDTO.setImage(responseReview.getUser().getImage());
+            responseReviewDTOS.add(responseReviewDTO);
+        });
+        return  responseReviewDTOS;
     }
 }

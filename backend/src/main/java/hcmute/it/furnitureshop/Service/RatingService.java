@@ -7,7 +7,7 @@ import hcmute.it.furnitureshop.Entity.User;
 import java.util.Optional;
 
 public interface RatingService {
-    public <S extends Rating> void save(Rating rating);
+    public <S extends Rating> void save(Integer userId,Integer productId,Double point);
 
-    public Optional<Rating> findByUserAndProduct (User user, Product product);
+    public Optional<Rating> findByUserAndProduct (Integer userId,Integer productId);
 }

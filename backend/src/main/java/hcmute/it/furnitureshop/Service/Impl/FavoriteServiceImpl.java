@@ -5,6 +5,7 @@ import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Repository.FavoriteRepository;
 import hcmute.it.furnitureshop.Repository.ProductRepository;
+import hcmute.it.furnitureshop.Repository.UserRepository;
 import hcmute.it.furnitureshop.Service.FavoriteService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ public class FavoriteServiceImpl implements FavoriteService {
     FavoriteRepository favoriteRepository;
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    UserRepository userRepository;
     @Override
     public Iterable<Favorite> findByUser(User user) {
         return favoriteRepository.findByUser(user);
@@ -35,13 +38,20 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    public <S extends Favorite> void saveFavorite(Favorite favorite) {
+    public <S extends Favorite> void saveFavorite(Integer productId,Integer userId) {
+        Optional<User> user=userRepository.findById(userId);
+        Optional<Product> product=productRepository.findById(productId);
+        Favorite favorite=new Favorite();
+        favorite.setUser(user.get());
+        favorite.setProduct(product.get());
         favoriteRepository.save(favorite);
     }
 
     @Override
-    public void deleteByUserAndProduct(User user, Product product) {
-        favoriteRepository.deleteByUserAndProduct(user,product);
+    public void deleteByUserAndProduct(Integer userId,Integer productId) {
+        Optional<User> user=userRepository.findById(userId);
+        Optional<Product> product=productRepository.findById(productId);
+        favoriteRepository.deleteByUserAndProduct(user.get(),product.get());
     }
 
     @Override

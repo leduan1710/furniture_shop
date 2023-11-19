@@ -10,8 +10,8 @@ public interface FavoriteService {
     public Iterable<Favorite> findByUser(User user);
     public Iterable<Favorite> findByProduct(Integer productId);
 
-    public <S extends Favorite> void saveFavorite(Favorite favorite);
-    void deleteByUserAndProduct(User user,Product product);
+    public <S extends Favorite> void saveFavorite(Integer productId,Integer userId);
+    void deleteByUserAndProduct(Integer userId,Integer productId);
 
     public Optional<Favorite> findById(Integer favoriteId);
 }
