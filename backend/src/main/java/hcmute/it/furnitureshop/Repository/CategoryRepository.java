@@ -22,4 +22,6 @@ public interface CategoryRepository extends CrudRepository<Category,Integer> {
     @Override
     @Transactional
     Optional<Category> findById(Integer integer);
+
+    Category findByName(String categoryName);
 }

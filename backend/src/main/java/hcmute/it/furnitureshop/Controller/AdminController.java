@@ -1,10 +1,13 @@
 package hcmute.it.furnitureshop.Controller;
 
+import hcmute.it.furnitureshop.DTO.ProductDTO;
 import hcmute.it.furnitureshop.DTO.ResponseDTO;
 import hcmute.it.furnitureshop.Config.JwtService;
 import hcmute.it.furnitureshop.DTO.CreateUserDTO;
 import hcmute.it.furnitureshop.DTO.UserDTO;
+import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
+import hcmute.it.furnitureshop.Service.ProductService;
 import hcmute.it.furnitureshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,8 @@ import java.util.Optional;
 public class AdminController {
     @Autowired
     UserService userService;
+    @Autowired
+    ProductService productService;
     @Autowired
     JwtService jwtService;
     public String getToken(){
@@ -39,7 +44,7 @@ public class AdminController {
         return ResponseEntity.ok("Hello Admin");
     }
 
-    //User
+    //CRUD User
     @RequestMapping("/getUsers")
     public List<User> getAll(){
         return userService.getAll();
@@ -78,5 +83,32 @@ public class AdminController {
         String message = userService.deleteUser(userId);
         return new ResponseDTO<>(null, "Ok", message);
     }
-    //
+    //CRUD Product
+    @RequestMapping("/products")
+    public Iterable<ProductDTO> getAllProduct(){
+        return productService.getAllProductsWithCategoryName();
+    }
+
+    @PostMapping("/createProduct")
+    public ResponseDTO<?> createProduct(@RequestBody ProductDTO createProductDTO){
+        Product product = productService.createProduct(createProductDTO);
+        if(product != null){
+            return new ResponseDTO<>(productService.createProduct(createProductDTO), "Ok", "Thêm sản phẩm thành công");
+        }
+        else{
+            return new ResponseDTO<>(null, "Fail", "Thêm sản phẩm thất bại ! Đã tồn tại sản phẩm trong hệ thống");
+        }
+    }
+
+    @PostMapping("/updateProduct/{productId}")
+    public ResponseDTO<?> updateProduct(@PathVariable("productId") Integer productId){
+        String message = productService.updateProduct(productId);
+        return new ResponseDTO<>(null, "Ok", message);
+    }
+
+    @RequestMapping("/deleteProduct/{productId}")
+    public ResponseDTO<?> deleteProduct(@PathVariable("productId") Integer productId){
+        String message = productService.deleteProduct(productId);
+        return new ResponseDTO<>(null, "Ok", message);
+    }
 }

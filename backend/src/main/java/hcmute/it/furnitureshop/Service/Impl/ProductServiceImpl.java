@@ -1,7 +1,9 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
+import hcmute.it.furnitureshop.DTO.ProductDTO;
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
+import hcmute.it.furnitureshop.Repository.CategoryRepository;
 import hcmute.it.furnitureshop.Repository.ProductRepository;
 import hcmute.it.furnitureshop.Service.ProductService;
 import jakarta.transaction.Transactional;
@@ -10,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
@@ -18,6 +22,9 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public Iterable<Product> getTop8Product() {
@@ -83,5 +90,57 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    @Override
+    public List<ProductDTO> getAllProductsWithCategoryName() {
+        List<ProductDTO> detailDTOList = new ArrayList<>();
+        productRepository.findAllProductsWithCategoryName().forEach(productJoinCate -> {
+                    ProductDTO productDetail = ProductDTO.builder()
+                            .productId(productJoinCate.getProductId())
+                            .name(productJoinCate.getName())
+                            .image(productJoinCate.getImage())
+                            .price(productJoinCate.getPrice())
+                            .size(productJoinCate.getSize())
+                            .categoryName(productJoinCate.getCategory().getName())
+                            .numberProductSold(productJoinCate.getNumberProductSold())
+                            .description(productJoinCate.getDescription())
+                            .material(productJoinCate.getMaterial())
+                            .quantity(productJoinCate.getQuantity())
+                            .status(productJoinCate.getStatus())
+                            .build();
+                    detailDTOList.add(productDetail);
+                });
+        return detailDTOList;
+    }
 
+    @Override
+    public String updateProduct(Integer productId) {
+        return null;
+    }
+
+    @Override
+    public String deleteProduct(Integer productId) {
+        return null;
+    }
+
+    @Override
+    public Product createProduct(ProductDTO createProductDTO) {
+        if(productRepository.findById(createProductDTO.getProductId()).isEmpty())
+        {
+            var product = Product.builder()
+                    .productId(createProductDTO.getProductId())
+                    .name(createProductDTO.getName())
+                    .Image(createProductDTO.getImage())
+                    .price(createProductDTO.getPrice())
+                    .size(createProductDTO.getSize())
+                    .category(categoryRepository.findByName(createProductDTO.getCategoryName()))
+                    .numberProductSold(createProductDTO.getNumberProductSold())
+                    .description(createProductDTO.getDescription())
+                    .material(createProductDTO.getMaterial())
+                    .quantity(createProductDTO.getQuantity())
+                    .status(createProductDTO.getStatus())
+                    .build();
+            return product;
+        }
+        else return null;
+    }
 }

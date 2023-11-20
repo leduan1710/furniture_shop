@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "Product")
 public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
