@@ -1,8 +1,18 @@
-package hcmute.it.furnitureshop.Config;
+package hcmute.it.furnitureshop.Service;
 
+import hcmute.it.furnitureshop.Config.VNPAYConfig;
 import hcmute.it.furnitureshop.DTO.ProductCheckOutDTO;
+import hcmute.it.furnitureshop.Entity.Order;
+import hcmute.it.furnitureshop.Entity.Product;
+import hcmute.it.furnitureshop.Entity.User;
+import hcmute.it.furnitureshop.Repository.OrderRepository;
+import hcmute.it.furnitureshop.Repository.ProductRepository;
+import hcmute.it.furnitureshop.Repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +21,12 @@ import java.util.*;
 
 @Service
 public class VNPAYService {
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    OrderRepository orderRepository;
     public String ProductIds(ProductCheckOutDTO productCheckOutDTO){
         String stringReturn="";
         for(int i=0;i<productCheckOutDTO.getProductIds().size();i++){
@@ -87,5 +103,34 @@ public class VNPAYService {
         String paymentUrl = VNPAYConfig.vnp_PayUrl + "?" + queryUrl;
 
         return paymentUrl;
+    }
+
+    public void PaymentCallBack(Map<String, String> queryParams, HttpServletResponse response) throws IOException {
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String stringProductIds = queryParams.get("productIds");
+        String nameUser = queryParams.get("nameUser");
+        String nowDelivery = queryParams.get("nowDelivery");
+        String stringCounts = queryParams.get("counts");
+        List<String> listStringProductIds = new ArrayList<String>(Arrays.asList(stringProductIds.split(",")));
+        List<String> listCounts = new ArrayList<String>(Arrays.asList(stringCounts.split(",")));
+        if ("00".equals(vnp_ResponseCode)) {
+            for(int i=0;i<listStringProductIds.size();i++){
+                Order order=new Order();
+                Optional<User> user=userRepository.findByUsername(nameUser);
+                Optional<Product> product= productRepository.findById(Integer.valueOf(listStringProductIds.get(i).replace(" ","")));
+                order.setUser(user.get());
+                order.setProduct(product.get());
+                order.setState("processing");
+                order.setDate(new Date());
+                order.setCount(Integer.parseInt(listCounts.get(i).replace(" ","")));
+                order.setPaid(true);
+                order.setNowDelivery(Boolean.valueOf(nowDelivery));
+                orderRepository.save(order);
+            }
+            response.sendRedirect("http://localhost:3000/checkout/success");
+        } else {
+            response.sendRedirect("http://localhost:3000/checkout/fail");
+
+        }
     }
 }

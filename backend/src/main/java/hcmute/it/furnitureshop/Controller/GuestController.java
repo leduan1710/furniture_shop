@@ -1,14 +1,17 @@
 package hcmute.it.furnitureshop.Controller;
 
-import hcmute.it.furnitureshop.Config.VNPAYService;
+import hcmute.it.furnitureshop.DTO.*;
+import hcmute.it.furnitureshop.ModelMapper.ChangeToDTOService;
+import hcmute.it.furnitureshop.Service.VNPAYService;
 import hcmute.it.furnitureshop.Entity.*;
 import hcmute.it.furnitureshop.Service.*;
 import jakarta.servlet.http.HttpServletResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @RestController
@@ -32,105 +35,86 @@ public class GuestController {
 
     @Autowired
     ReviewService reviewService;
+    @Autowired
+    VNPAYService vnpayService;
+    @Autowired
+    ModelMapper modelMapper;
+    @Autowired
+    ChangeToDTOService changeToDTOService;
+    @Autowired
+    FavoriteService favoriteService;
     @GetMapping("/room")
-    public Iterable<Room> getAllRoom(){
-        return roomService.getAll();
+    public ResponseEntity<Iterable<Room>> getAllRoom(){
+        Iterable<Room> rooms=roomService.getAll();
+        return ResponseEntity.status(200).body(rooms);
     }
     @GetMapping("/room/{roomId}")
-    public Optional<Room> getRoomById(@PathVariable("roomId")Integer roomId){
-        return roomService.getById(roomId);
+    public ResponseEntity<Optional<Room>> getRoomById(@PathVariable("roomId")Integer roomId){
+        Optional<Room> room= roomService.getById(roomId);
+        return ResponseEntity.status(200).body(room);
     }
     @RequestMapping("/room/categories/{id}")
-    public Iterable<Category> getCategoriesByRoom(@PathVariable("id") Integer roomId){
-        Optional<Room> roomById= roomService.getById(roomId);
-        return categoryService.getCategoriesByRoom(roomById);
+    public ResponseEntity<Iterable<CategoryDTO>> getCategoriesByRoom(@PathVariable("id") Integer roomId){
+        Iterable<Category> categories=categoryService.getCategoriesByRoom(roomId);
+        return ResponseEntity.status(200).body(changeToDTOService.changeListCategoryToDTO(categories));
     }
     @RequestMapping("/room/products/{id}")
-    public Iterable<Product> getProductsByRoom(@PathVariable("id") Integer roomId){
-        Optional<Room> roomById= roomService.getById(roomId);
-        Iterable<Category> categories=categoryService.getCategoriesByRoom(roomById);
-        ArrayList<Product> products = new ArrayList<>();
-        categories.forEach(category -> {
-            products.addAll((Collection<? extends Product>) productService.getProductsByCategory(category));
-        });
-        return products;
+    public ResponseEntity<Iterable<ProductDTO>> getProductsByRoom(@PathVariable("id") Integer roomId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductByRoom(roomId)));
     }
-
     @RequestMapping("/category")
-    public Iterable<Category> getAllCategory(){
-        return categoryService.getAll();
+    public ResponseEntity<Iterable<CategoryDTO>> getAllCategory(){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListCategoryToDTO(categoryService.getAll()));
     }
-
-    @RequestMapping("/products")
-    public Iterable<Product> getAllProduct(){
-        return productService.getAll();
-    }
-
     @RequestMapping("/product/top8Product")
-    public Iterable<Product> getTop8Product(){
-        return productService.getTop8Product();
+    public ResponseEntity<Iterable<ProductDTO>> getTop8Product(){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getTop8Product()));
     }
-
     @RequestMapping("/product/{productId}")
-    public Optional<Product> getProductById(@PathVariable("productId") Integer productId){
-        return productService.getProductById(productId);
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("productId") Integer productId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeProductToDTO(productService.getProductById(productId).get()));
     }
 
     @RequestMapping("/product/containing/{name}")
-    public Iterable<Product> getProductByNameContaining(@PathVariable("name")String name){
-        return productService.getProductByNameContaining(name);
+    public ResponseEntity<Iterable<ProductDTO>> getProductByNameContaining(@PathVariable("name")String name){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductByNameContaining(name)));
     }
 
     @RequestMapping("/productsByCategory/{categoryId}")
-    public Iterable<Product> getProductsByCategory(@PathVariable("categoryId")Integer categoryId){
-        Optional<Category> category=categoryService.findById(categoryId);
-        return productService.getProductsByCategory(category.get());
+    public ResponseEntity<Iterable<ProductDTO>> getProductsByCategory(@PathVariable("categoryId")Integer categoryId){
+
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductsByCategory(categoryId)));
     }
     @RequestMapping("/productsByCategoryDesc/{categoryId}")
-    public Iterable<Product> getProductsByCategoryAndPriceDesc(@PathVariable("categoryId")Integer categoryId){
+    public ResponseEntity<Iterable<ProductDTO>> getProductsByCategoryAndPriceDesc(@PathVariable("categoryId")Integer categoryId){
         Optional<Category> category=categoryService.findById(categoryId);
-        return productService.getProductByCategoryAndPriceDesc(category.get());
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductByCategoryAndPriceDesc(category.get())));
     }
     @RequestMapping("/productsByCategoryAsc/{categoryId}")
-    public Iterable<Product> getProductsByCategoryAndPriceAsc(@PathVariable("categoryId")Integer categoryId){
+    public ResponseEntity<Iterable<ProductDTO>> getProductsByCategoryAndPriceAsc(@PathVariable("categoryId")Integer categoryId){
         Optional<Category> category=categoryService.findById(categoryId);
-        return productService.getProductByCategoryAndPriceAsc(category.get());
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductByCategoryAndPriceAsc(category.get())));
     }
     @RequestMapping("/productsByCategoryOrderDiscount/{categoryId}")
-    public Iterable<Product> getProductsByCategoryAndDiscount(@PathVariable("categoryId")Integer categoryId){
-        Optional<Category> category=categoryService.findById(categoryId);
-        Iterable<Product> products= productService.getProductsByCategory(category.get());
-        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
-        products.forEach(product -> {
-            if(product.getDiscount()!=null){
-                productsHaveDisCount.add(product);
-            }
-        });
-        return productsHaveDisCount;
+    public ResponseEntity<Iterable<ProductDTO>> getProductsByCategoryAndDiscount(@PathVariable("categoryId")Integer categoryId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductsByCategoryAndDiscount(categoryId)));
     }
     @RequestMapping("/getCategory/{categoryId}")
-    public Optional<Category> getCategoryById(@PathVariable("categoryId")Integer categoryId){
-        return categoryService.findById(categoryId);
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable("categoryId")Integer categoryId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeCategoryToDTO(categoryService.findById(categoryId).get()));
     }
 
     @RequestMapping("/ProductDescByRoom/{roomId}")
-    public Iterable<Product> getProductDescByRoom(@PathVariable("roomId") Integer roomId){
-        return productService.findProductByRoomDesc(roomId);
+    public ResponseEntity<Iterable<ProductDTO>> getProductDescByRoom(@PathVariable("roomId") Integer roomId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.findProductByRoomDesc(roomId)));
     }
     @RequestMapping("/ProductAscByRoom/{roomId}")
-    public Iterable<Product> getProductAscByRoom(@PathVariable("roomId") Integer roomId){
-        return productService.findProductByRoomAsc(roomId);
+    public ResponseEntity<Iterable<ProductDTO>> getProductAscByRoom(@PathVariable("roomId") Integer roomId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.findProductByRoomAsc(roomId)));
     }
     @RequestMapping("/ProductSaleByRoom/{roomId}")
-    public Iterable<Product> getProductSaleByRoom(@PathVariable("roomId") Integer roomId){
-        Iterable<Product> products= productService.findProductByRoomSale(roomId);
-        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
-        products.forEach(product -> {
-            if(product.getDiscount()!=null){
-                productsHaveDisCount.add(product);
-            }
-        });
-        return productsHaveDisCount;
+    public ResponseEntity<Iterable<ProductDTO>> getProductSaleByRoom(@PathVariable("roomId") Integer roomId){
+       return ResponseEntity.status(200).body(changeToDTOService.changeListProductToDTO(productService.getProductSaleByRoom(roomId)));
     }
 
     @RequestMapping("/checkPhone/{phone}")
@@ -142,39 +126,17 @@ public class GuestController {
         }
     }
     @GetMapping("/reviewByProduct/{productId}")
-    public Iterable<Review> findReviewsByProduct(@PathVariable("productId")Integer productId){
+    public ResponseEntity<Iterable<ReviewDTO>> findReviewsByProduct(@PathVariable("productId")Integer productId){
         Optional<Product> product=productService.findById(productId);
-        return reviewService.findByProduct(product.get());
+        return ResponseEntity.status(200).body(changeToDTOService.changeListReviewToDTO(reviewService.findByProduct(product.get())));
     }
 
     @GetMapping("/payment-callback")
     public void paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException {
-        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-        String stringProductIds = queryParams.get("productIds");
-        String nameUser = queryParams.get("nameUser");
-        String nowDelivery = queryParams.get("nowDelivery");
-        String stringCounts = queryParams.get("counts");
-        List<String> listStringProductIds = new ArrayList<String>(Arrays.asList(stringProductIds.split(",")));
-        List<String> listCounts = new ArrayList<String>(Arrays.asList(stringCounts.split(",")));
-        if ("00".equals(vnp_ResponseCode)) {
-            for(int i=0;i<listStringProductIds.size();i++){
-                Order order=new Order();
-                Optional<User> user=userService.findByName(nameUser);
-                Optional<Product> product= productService.findById(Integer.valueOf(listStringProductIds.get(i).replace(" ","")));
-                order.setUser(user.get());
-                order.setProduct(product.get());
-                order.setState("processing");
-                order.setDate(new Date());
-                order.setCount(Integer.parseInt(listCounts.get(i).replace(" ","")));
-                order.setPaid(true);
-                order.setNowDelivery(Boolean.valueOf(nowDelivery));
-                orderService.save(order);
-            }
-            response.sendRedirect("http://localhost:3000/checkout/success");
-        } else {
-            response.sendRedirect("http://localhost:3000/checkout/fail");
-
-        }
+       vnpayService.PaymentCallBack(queryParams,response);
     }
-
+    @GetMapping("/getFavoritesByProduct/{productId}")
+    public ResponseEntity<Iterable<FavoriteDTO>> getFavoritesByProduct(@PathVariable("productId")Integer productId){
+        return ResponseEntity.status(200).body(changeToDTOService.changeListFavoriteToDTO(favoriteService.findByProduct(productId)));
+    }
 }

@@ -1,21 +1,22 @@
 package hcmute.it.furnitureshop.DTO;
 
-import hcmute.it.furnitureshop.Common.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
-    private Integer userId;
+public class ReviewDTO {
+    private int reviewId;
+    private int userId;
     private String name;
-    private String phone;
+    private String content;
     private String image;
-    private String status;
-    private String address;
-    private String role;
+    private Date date;
+
 }

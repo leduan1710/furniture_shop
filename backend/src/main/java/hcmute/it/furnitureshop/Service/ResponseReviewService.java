@@ -8,5 +8,5 @@ public interface ResponseReviewService {
 
     public void deleteById(Integer responseReviewId);
 
-    public <S extends  ResponseReview> void save(ResponseReview responseReview);
+    public <S extends  ResponseReview> void save(Integer userId,Integer reviewId,String content);
 }

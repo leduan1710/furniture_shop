@@ -4,6 +4,8 @@ import hcmute.it.furnitureshop.Entity.Favorite;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Repository.FavoriteRepository;
+import hcmute.it.furnitureshop.Repository.ProductRepository;
+import hcmute.it.furnitureshop.Repository.UserRepository;
 import hcmute.it.furnitureshop.Service.FavoriteService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,24 +22,36 @@ import java.util.Optional;
 public class FavoriteServiceImpl implements FavoriteService {
     @Autowired
     FavoriteRepository favoriteRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    UserRepository userRepository;
     @Override
     public Iterable<Favorite> findByUser(User user) {
         return favoriteRepository.findByUser(user);
     }
 
     @Override
-    public Iterable<Favorite> findByProduct(Product product) {
-        return favoriteRepository.findByProduct(product);
+    public Iterable<Favorite> findByProduct(Integer productId) {
+        Optional<Product> product= productRepository.findById(productId);
+        return favoriteRepository.findByProduct(product.get());
     }
 
     @Override
-    public <S extends Favorite> void saveFavorite(Favorite favorite) {
+    public <S extends Favorite> void saveFavorite(Integer productId,Integer userId) {
+        Optional<User> user=userRepository.findById(userId);
+        Optional<Product> product=productRepository.findById(productId);
+        Favorite favorite=new Favorite();
+        favorite.setUser(user.get());
+        favorite.setProduct(product.get());
         favoriteRepository.save(favorite);
     }
 
     @Override
-    public void deleteByUserAndProduct(User user, Product product) {
-        favoriteRepository.deleteByUserAndProduct(user,product);
+    public void deleteByUserAndProduct(Integer userId,Integer productId) {
+        Optional<User> user=userRepository.findById(userId);
+        Optional<Product> product=productRepository.findById(productId);
+        favoriteRepository.deleteByUserAndProduct(user.get(),product.get());
     }
 
     @Override

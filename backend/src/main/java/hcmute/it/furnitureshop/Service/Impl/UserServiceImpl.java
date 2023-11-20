@@ -39,7 +39,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public <S extends User> void savePhoneOfUser(User user){
+    public <S extends User> void savePhoneOfUser(User user,String phone){
+        user.setPhone(phone);
         userRepository.save(user);
     }
 
@@ -65,7 +66,6 @@ public class UserServiceImpl implements UserService {
                 .userId(value.getUserId())
                 .name(value.getName())
                 .phone(value.getPhone())
-                .username(value.getUsername())
                 .address(value.getAddress())
                 .status(value.getStatus())
                 .image(value.getImage())

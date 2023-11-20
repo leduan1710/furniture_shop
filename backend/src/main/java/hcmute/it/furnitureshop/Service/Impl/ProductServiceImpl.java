@@ -1,10 +1,13 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.DTO.ProductDTO;
+import hcmute.it.furnitureshop.DTO.ProductDetailDTO;
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Product;
+import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Repository.CategoryRepository;
 import hcmute.it.furnitureshop.Repository.ProductRepository;
+import hcmute.it.furnitureshop.Repository.RoomRepository;
 import hcmute.it.furnitureshop.Service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
@@ -22,9 +26,10 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private RoomRepository roomRepository;
 
     @Override
     public Iterable<Product> getTop8Product() {
@@ -41,8 +46,9 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByNameContaining(name);
     }
 
-    public  Iterable<Product> getProductsByCategory(Category category){
-        return productRepository.findProductsByCategory(category);
+    public  Iterable<Product> getProductsByCategory(Integer categoryId){
+        Optional<Category> category=categoryRepository.findById(categoryId);
+        return productRepository.findProductsByCategory(category.get());
     }
 
     @Override
@@ -66,11 +72,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Iterable<Product> findProductByRoomSale(Integer roomId) {
-        return productRepository.findProductsByCategory_Room_RoomId(roomId);
-    }
-
-    @Override
     public Optional<Product> findById(Integer productId) {
         return productRepository.findById(productId);
     }
@@ -91,24 +92,57 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProductsWithCategoryName() {
-        List<ProductDTO> detailDTOList = new ArrayList<>();
+    public Iterable<Product> getProductByRoom(Integer roomId) {
+        Optional<Room> roomById= roomRepository.findById(roomId);
+        Iterable<Category> categories=categoryRepository.findCategoriesByRoom(roomById);
+        ArrayList<Product> products = new ArrayList<>();
+        categories.forEach(category -> {
+            products.addAll((Collection<? extends Product>) productRepository.findProductsByCategory(category));
+        });
+        return products;
+    }
+
+    @Override
+    public Iterable<Product> getProductsByCategoryAndDiscount(Integer categoryId) {
+        Iterable<Product> products= getProductsByCategory(categoryId);
+        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
+        products.forEach(product -> {
+            if(product.getDiscount()!=null){
+                productsHaveDisCount.add(product);
+            }
+        });
+        return productsHaveDisCount;
+    }
+
+    @Override
+    public Iterable<Product> getProductSaleByRoom(Integer roomId) {
+        Iterable<Product> products= productRepository.findProductsByCategory_Room_RoomId(roomId);
+        ArrayList<Product> productsHaveDisCount = new ArrayList<>();
+        products.forEach(product -> {
+            if(product.getDiscount()!=null){
+                productsHaveDisCount.add(product);
+            }
+        });
+        return productsHaveDisCount;
+    }
+    public List<ProductDetailDTO> getAllProductsWithCategoryName() {
+        List<ProductDetailDTO> detailDTOList = new ArrayList<>();
         productRepository.findAllProductsWithCategoryName().forEach(productJoinCate -> {
-                    ProductDTO productDetail = ProductDTO.builder()
-                            .productId(productJoinCate.getProductId())
-                            .name(productJoinCate.getName())
-                            .image(productJoinCate.getImage())
-                            .price(productJoinCate.getPrice())
-                            .size(productJoinCate.getSize())
-                            .categoryName(productJoinCate.getCategory().getName())
-                            .numberProductSold(productJoinCate.getNumberProductSold())
-                            .description(productJoinCate.getDescription())
-                            .material(productJoinCate.getMaterial())
-                            .quantity(productJoinCate.getQuantity())
-                            .status(productJoinCate.getStatus())
-                            .build();
-                    detailDTOList.add(productDetail);
-                });
+            ProductDetailDTO productDetail = ProductDetailDTO.builder()
+                    .productId(productJoinCate.getProductId())
+                    .name(productJoinCate.getName())
+                    .image(productJoinCate.getImage())
+                    .price(productJoinCate.getPrice())
+                    .size(productJoinCate.getSize())
+                    .categoryName(productJoinCate.getCategory().getName())
+                    .numberProductSold(productJoinCate.getNumberProductSold())
+                    .description(productJoinCate.getDescription())
+                    .material(productJoinCate.getMaterial())
+                    .quantity(productJoinCate.getQuantity())
+                    .status(productJoinCate.getStatus())
+                    .build();
+            detailDTOList.add(productDetail);
+        });
         return detailDTOList;
     }
 
@@ -123,7 +157,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product createProduct(ProductDTO createProductDTO) {
+    public Product createProduct(ProductDetailDTO createProductDTO) {
         if(productRepository.findById(createProductDTO.getProductId()).isEmpty())
         {
             var product = Product.builder()

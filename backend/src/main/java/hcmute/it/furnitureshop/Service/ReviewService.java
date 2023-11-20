@@ -6,7 +6,7 @@ import hcmute.it.furnitureshop.Entity.Review;
 import java.util.Optional;
 
 public interface ReviewService {
-    public <S extends Review> void saveReview(Review review);
+    public <S extends Review> void saveReview(Integer userId,Integer productId,String content);
 
     public Iterable<Review> findByProduct(Product product);
 

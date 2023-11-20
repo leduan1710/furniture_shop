@@ -1,29 +1,25 @@
 package hcmute.it.furnitureshop.DTO;
 
-import hcmute.it.furnitureshop.Entity.Discount;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class ProductDetailDTO {
     private int productId;
     private String name;
     private long price;
     private long quantity;
-    private String Image;
+    private String image;
     private String description;
     private String material;
+    private int numberProductSold;
     private String size;
     private String status;
-    private int numberProductSold;
-    private Discount discount;
-    private Date dateImport;
+    private String categoryName;
+    private String discountName;
 }

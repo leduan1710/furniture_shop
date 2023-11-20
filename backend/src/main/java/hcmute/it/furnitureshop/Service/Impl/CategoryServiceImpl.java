@@ -1,8 +1,10 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
+import hcmute.it.furnitureshop.DTO.CategoryDTO;
 import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Repository.CategoryRepository;
+import hcmute.it.furnitureshop.Repository.RoomRepository;
 import hcmute.it.furnitureshop.Service.CategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,13 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
     CategoryRepository categoryRepository ;
+    @Autowired
+    RoomRepository roomRepository;
+
 
     @Override
-    public Iterable<Category> getCategoriesByRoom(Optional<Room> room) {
+    public Iterable<Category> getCategoriesByRoom(Integer roomId) {
+        Optional<Room> room=roomRepository.findById(roomId);
         return categoryRepository.findCategoriesByRoom(room);
     }
 

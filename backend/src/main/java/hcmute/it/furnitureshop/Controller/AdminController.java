@@ -1,10 +1,7 @@
 package hcmute.it.furnitureshop.Controller;
 
-import hcmute.it.furnitureshop.DTO.ProductDTO;
-import hcmute.it.furnitureshop.DTO.ResponseDTO;
+import hcmute.it.furnitureshop.DTO.*;
 import hcmute.it.furnitureshop.Config.JwtService;
-import hcmute.it.furnitureshop.DTO.CreateUserDTO;
-import hcmute.it.furnitureshop.DTO.UserDTO;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
 import hcmute.it.furnitureshop.Service.ProductService;
@@ -85,12 +82,12 @@ public class AdminController {
     }
     //CRUD Product
     @RequestMapping("/products")
-    public Iterable<ProductDTO> getAllProduct(){
+    public Iterable<ProductDetailDTO> getAllProduct(){
         return productService.getAllProductsWithCategoryName();
     }
 
     @PostMapping("/createProduct")
-    public ResponseDTO<?> createProduct(@RequestBody ProductDTO createProductDTO){
+    public ResponseDTO<?> createProduct(@RequestBody ProductDetailDTO createProductDTO){
         Product product = productService.createProduct(createProductDTO);
         if(product != null){
             return new ResponseDTO<>(productService.createProduct(createProductDTO), "Ok", "Thêm sản phẩm thành công");
