@@ -25,7 +25,7 @@ public interface ProductService {
     public Iterable<Product> getProductByRoom(Integer roomId);
     public Iterable<Product> getProductsByCategoryAndDiscount(Integer categoryId);
     public Iterable<Product> getProductSaleByRoom(Integer roomId);
-    String updateProduct(Integer productId);
+    String updateProduct(ProductDetailDTO productDTO);
     String deleteProduct(Integer productId);
     Product createProduct(ProductDetailDTO createProductDTO);
 }

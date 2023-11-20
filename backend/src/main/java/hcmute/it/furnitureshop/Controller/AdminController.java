@@ -2,8 +2,11 @@ package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.DTO.*;
 import hcmute.it.furnitureshop.Config.JwtService;
+import hcmute.it.furnitureshop.Entity.Order;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
+import hcmute.it.furnitureshop.Service.CategoryService;
+import hcmute.it.furnitureshop.Service.OrderService;
 import hcmute.it.furnitureshop.Service.ProductService;
 import hcmute.it.furnitureshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,10 @@ public class AdminController {
     UserService userService;
     @Autowired
     ProductService productService;
+    @Autowired
+    CategoryService categoryService;
+    @Autowired
+    OrderService orderService;
     @Autowired
     JwtService jwtService;
     public String getToken(){
@@ -97,9 +104,9 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/updateProduct/{productId}")
-    public ResponseDTO<?> updateProduct(@PathVariable("productId") Integer productId){
-        String message = productService.updateProduct(productId);
+    @PostMapping("/updateProduct")
+    public ResponseDTO<?> updateProduct(@RequestBody ProductDetailDTO productDTO){
+        String message = productService.updateProduct(productDTO);
         return new ResponseDTO<>(null, "Ok", message);
     }
 
@@ -107,5 +114,11 @@ public class AdminController {
     public ResponseDTO<?> deleteProduct(@PathVariable("productId") Integer productId){
         String message = productService.deleteProduct(productId);
         return new ResponseDTO<>(null, "Ok", message);
+    }
+
+    ////////////////////////Order
+    @RequestMapping("updateStateOrder/{orderId}")
+    public ResponseDTO<Order> updateStateOrder(@PathVariable("orderId") Integer orderId){
+        return new ResponseDTO<>(orderService.UpdateOrder(orderId), "Ok", "");
     }
 }

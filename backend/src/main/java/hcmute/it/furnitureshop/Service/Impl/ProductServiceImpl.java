@@ -78,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Iterable<Product> getAll() {
-        return productRepository.findAll();
+        return productRepository.findProductsByStatus("inactive");
     }
 
     @Override
@@ -145,15 +145,23 @@ public class ProductServiceImpl implements ProductService {
         });
         return detailDTOList;
     }
-
     @Override
-    public String updateProduct(Integer productId) {
-        return null;
+    public String updateProduct(ProductDetailDTO productDTO) {
+        if(productRepository.findById(productDTO.getProductId()).isPresent())
+        {
+            return "Đã cập nhật sản phẩm thành công";
+        }
+        return "Không tồn tại sản phẩm trong hệ thống";
     }
 
     @Override
     public String deleteProduct(Integer productId) {
-        return null;
+        if(productRepository.findById(productId).isPresent())
+        {
+            productRepository.deleteById(productId);
+            return "Đã xóa sản phẩm thành công";
+        }
+        return "Không tồn tại sản phẩm trong hệ thống";
     }
 
     @Override

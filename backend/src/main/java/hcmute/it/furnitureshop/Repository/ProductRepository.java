@@ -28,6 +28,9 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
     Iterable<Product> findProductsByCategoryOrderByPriceAsc(Category category);
     @Override
     Optional<Product> findById(Integer integer);
+
+    Iterable<Product> findProductsByStatus(String status);
+
     Optional<Product> findProductByOrder_OrderId(Integer orderId);
     @Transactional
     /*@Query(value="SELECT product.product_id as productId, product.url_image as image, product.description as description," +

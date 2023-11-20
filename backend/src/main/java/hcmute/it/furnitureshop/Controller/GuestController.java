@@ -48,6 +48,12 @@ public class GuestController {
         Iterable<Room> rooms=roomService.getAll();
         return ResponseEntity.status(200).body(rooms);
     }
+    @GetMapping("/products")
+    public ResponseEntity<Iterable<Product>> getAllProduct(){
+        Iterable<Product> rooms=productService.getAll();
+        return ResponseEntity.status(200).body(rooms);
+    }
+
     @GetMapping("/room/{roomId}")
     public ResponseEntity<Optional<Room>> getRoomById(@PathVariable("roomId")Integer roomId){
         Optional<Room> room= roomService.getById(roomId);

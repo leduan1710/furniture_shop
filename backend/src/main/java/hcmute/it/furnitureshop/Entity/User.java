@@ -2,6 +2,7 @@ package hcmute.it.furnitureshop.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import hcmute.it.furnitureshop.Common.RankEnum;
 import hcmute.it.furnitureshop.Common.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,11 @@ public class User implements UserDetails {
     private Date createDate;
     private String phone;
     private String status;
+    private int point;
+
+    @Enumerated(EnumType.STRING)
+    private RankEnum rankUser;
+
     @Enumerated(EnumType.STRING)
     private RoleEnum role = RoleEnum.USER;
 

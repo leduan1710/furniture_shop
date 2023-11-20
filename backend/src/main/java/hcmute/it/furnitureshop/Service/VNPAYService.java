@@ -118,19 +118,21 @@ public class VNPAYService {
                 Order order=new Order();
                 Optional<User> user=userRepository.findByUsername(nameUser);
                 Optional<Product> product= productRepository.findById(Integer.valueOf(listStringProductIds.get(i).replace(" ","")));
-                order.setUser(user.get());
-                order.setProduct(product.get());
-                order.setState("processing");
-                order.setDate(new Date());
-                order.setCount(Integer.parseInt(listCounts.get(i).replace(" ","")));
-                order.setPaid(true);
-                order.setNowDelivery(Boolean.valueOf(nowDelivery));
-                orderRepository.save(order);
+                if (user.isPresent() && product.isPresent())
+                {
+                    order.setUser(user.get());
+                    order.setProduct(product.get());
+                    order.setState("processing");
+                    order.setDate(new Date());
+                    order.setCount(Integer.parseInt(listCounts.get(i).replace(" ","")));
+                    order.setPaid(true);
+                    order.setNowDelivery(Boolean.valueOf(nowDelivery));
+                    orderRepository.save(order);
+                }
             }
             response.sendRedirect("http://localhost:3000/checkout/success");
         } else {
             response.sendRedirect("http://localhost:3000/checkout/fail");
-
         }
     }
 }
