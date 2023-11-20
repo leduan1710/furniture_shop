@@ -118,7 +118,7 @@ public class AdminController {
 
     ////////////////////////Order
     @RequestMapping("updateStateOrder/{orderId}")
-    public ResponseDTO<Order> updateStateOrder(@PathVariable("orderId") Integer orderId){
-        return new ResponseDTO<>(orderService.UpdateOrder(orderId), "Ok", "");
+    public ResponseDTO<?> updateStateOrder(@PathVariable("orderId") Integer orderId){
+        return new ResponseDTO<>(null, "Ok", orderService.UpdateOrder(orderId));
     }
 }

@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order UpdateOrder(Integer orderId) {
+    public String UpdateOrder(Integer orderId) {
         Optional<Order> order=orderRepository.findById(orderId);
 
         String notificationMessage = null;
@@ -115,13 +115,13 @@ public class OrderServiceImpl implements OrderService {
             Notification notification=new Notification();
             notification.setState(false);
             notification.setDescription(notificationMessage);
-            notification.setUser(userRepository.findById(order.get().getUser().getUserId()).get());
+            notification.setUser(order.get().getUser());
             notification.setDate(new Date());
             notification.setOrder(order.get());
             notificationRepository.save(notification);
-            return order.get();
+            return "Chuyển trạng thái thành công";
         }
-        else return null;
+        else return "Chuyển trạng thái thất bại";
     }
 
     @Override
@@ -159,15 +159,16 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(orderId);
     }
 
-    private void pointCalculate(Integer userId, Optional<Order> order)
+    private void pointCalculate(Integer userId, Integer orderId)
     {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isPresent())
         {
+            Optional<Order> order = orderRepository.findById(orderId);
             int point = (int)(user.get().getPoint() + order.get().getCount()*(order.get().getProduct().getPrice())/100000);
             user.get().setPoint(point);
-            if (point >=0 && point <= 100)
+            if (point >0 && point <= 100)
                 user.get().setRankUser(RankEnum.BRONZE);
             else if (point<=200)
                 user.get().setRankUser(RankEnum.SILVER);
@@ -178,7 +179,6 @@ public class OrderServiceImpl implements OrderService {
             else if (point<=500)
                 user.get().setRankUser(RankEnum.DIAMOND);
         }
-
     }
 
 }
