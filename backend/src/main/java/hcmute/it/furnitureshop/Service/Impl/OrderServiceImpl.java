@@ -91,30 +91,30 @@ public class OrderServiceImpl implements OrderService {
     public String UpdateOrder(Integer orderId) {
         Optional<Order> order=orderRepository.findById(orderId);
 
-        String notificationMessage = null;
+        String message = null;
         if (order.isPresent() && !order.get().getState().isEmpty())
         {
             switch (order.get().getState()) {
                 case "processing" -> {
                     order.get().setState("processed");
-                    notificationMessage = "Đơn hàng đã được xác nhận";
+                    message = "Đơn hàng đã được xác nhận";
                 }
                 case "processed" -> {
                     order.get().setState("delivering");
-                    notificationMessage = "Đơn hàng đang được vận chuyển";
+                    message = "Đơn hàng đang được vận chuyển";
                 }
                 case "delivering" -> {
                     order.get().setState("delivered");
-                    notificationMessage = "Đơn hàng đã được giao";
+                    message = "Đơn hàng đã được giao";
                     order.get().setPaid(true);
                 }
             }
             if (order.get().getPaid())
-                pointCalculate(order.get().getUser().getUserId(), order);
+                pointCalculate(order.get().getUser().getUserId(), orderId);
             /// Tạo thông báo
             Notification notification=new Notification();
             notification.setState(false);
-            notification.setDescription(notificationMessage);
+            notification.setDescription(message);
             notification.setUser(order.get().getUser());
             notification.setDate(new Date());
             notification.setOrder(order.get());
