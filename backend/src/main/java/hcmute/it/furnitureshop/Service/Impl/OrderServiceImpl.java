@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.Common.RankEnum;
+import hcmute.it.furnitureshop.DTO.OrderDTO;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
 import hcmute.it.furnitureshop.Entity.Notification;
 import hcmute.it.furnitureshop.Entity.Order;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.relational.core.sql.In;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -64,27 +66,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void CancelOrder(Integer orderId,User user) {
+    public String CancelOrder(Integer orderId) {
         Optional<Order> order=orderRepository.findById(orderId);
-        order.get().setState("canceled");
-        ///
-        Notification notification=new Notification();
-        notification.setState(false);
-        notification.setDescription("Huỷ đơn hàng thành công");
-        notification.setUser(user);
-        notification.setDate(new Date());
-        //
-        List<Notification> notifications=order.get().getNotification();
-        notifications.add(notification);
-        order.get().setNotification(notifications);
-        //
-        orderRepository.save(order.get());
-        notification.setOrder(order.get());
-        notificationRepository.save(notification);
-        //// cộng số lượng khi huỷ
-        Product product= order.get().getProduct();
-        product.setQuantity(product.getQuantity()+order.get().getCount());
-        productRepository.save(product);
+        if(order.isPresent()){
+            if(order.get().getState().equals("processing")) {
+                Product product = order.get().getProduct();
+                if(product != null){
+                    order.get().setState("canceled");
+                    Notification notification = new Notification();
+                    notification.setState(false);
+                    notification.setDescription("Huỷ đơn hàng thành công");
+                    notification.setUser(order.get().getUser());
+                    notification.setDate(new Date());
+                    notification.setOrder(order.get());
+                    notificationRepository.save(notification);
+                    orderRepository.save(order.get());
+                    product.setQuantity(product.getQuantity() + order.get().getCount());
+                    productRepository.save(product);
+                    return "canceled success";
+                }else {
+                    return "canceled fail";
+                }
+            }else {
+                return "this order can't canceled";
+            }
+        }else{
+            return "canceled fail";
+        }
     }
 
     @Override
@@ -125,28 +133,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void RestoreOrder(Integer orderId, User user) {
+    public String RestoreOrder(Integer orderId) {
         Optional<Order> order=orderRepository.findById(orderId);
-        order.get().setState("processing");
-        order.get().setDate(new Date());
-        ///
-        Notification notification=new Notification();
-        notification.setState(false);
-        notification.setDescription("Đặt lại đơn hàng thành công");
-        notification.setUser(user);
-        notification.setDate(new Date());
-        //
-        List<Notification> notifications=order.get().getNotification();
-        notifications.add(notification);
-        order.get().setNotification(notifications);
-        //
-        orderRepository.save(order.get());
-        notification.setOrder(order.get());
-        notificationRepository.save(notification);
-        //// trừ số lượng khi đặt lại
-        Product product= order.get().getProduct();
-        product.setQuantity(product.getQuantity()-order.get().getCount());
-        productRepository.save(product);
+        if(order.isPresent()){
+            if(order.get().getState().equals("canceled")){
+                Product product= order.get().getProduct();
+                if(product.getQuantity()>0){
+                    order.get().setState("processing");
+                    order.get().setDate(new Date());
+                    orderRepository.save(order.get());
+
+                    Notification notification=new Notification();
+                    notification.setState(false);
+                    notification.setDescription("Đặt lại đơn hàng thành công");
+                    notification.setUser(order.get().getUser());
+                    notification.setDate(new Date());
+                    notification.setOrder(order.get());
+
+                    notificationRepository.save(notification);
+
+                    product.setQuantity(product.getQuantity()-order.get().getCount());
+                    productRepository.save(product);
+                    return "restore success";
+                }else{
+                    return "not enough product quantity";
+                }
+            }else{
+                return "this order can't restore";
+            }
+        }else{
+            return "restore fail";
+        }
     }
 
     @Override
@@ -157,6 +174,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(Integer orderId) {
         return orderRepository.findById(orderId);
+    }
+
+    @Override
+    public Iterable<Order> findOrderByUserAndState(String username,String state) {
+        Optional<User> user=userRepository.findByUsername(username);
+        if(user.isPresent()) {
+            Iterable<Order> orders = orderRepository.findOrdersByUserOrderByDateDesc(user.get());
+            ArrayList<Order> ordersReturn = new ArrayList<>();
+            orders.forEach(order -> {
+                if (order.getState().equals(state)) {
+                    ordersReturn.add(order);
+                }
+            });
+            return ordersReturn;
+        }
+        else{
+            return new ArrayList<>();
+        }
     }
 
     private void pointCalculate(Integer userId, Optional<Order> order)
