@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -32,16 +33,12 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
     Iterable<Product> findProductsByStatus(String status);
 
     Optional<Product> findProductByOrder_OrderId(Integer orderId);
-    @Transactional
-    /*@Query(value="SELECT product.product_id as productId, product.url_image as image, product.description as description," +
-            " product.material as material, product.name as name, product.number_product_sold as numberProductSold," +
-            " product.price as price, product.quantity as quantiy, product.size as size, " +
-            "product.status as status, category.name as categoryName FROM springserverdb.product JOIN springserverdb.category " +
-            "WHERE springserverdb.product.category_id = springserverdb.category.category_id;", nativeQuery = true)*/
+
     @Query(value="SELECT springserverdb.product.* FROM springserverdb.product " +
             "JOIN springserverdb.category " +
             "ON springserverdb.product.category_id = springserverdb.category.category_id " +
             "WHERE springserverdb.product.category_id = springserverdb.category.category_id;", nativeQuery = true)
     Iterable<Product> findAllProductsWithCategoryName();
 
+    Optional<Product> findByName(String productName);
 }

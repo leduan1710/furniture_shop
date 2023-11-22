@@ -166,7 +166,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(ProductDetailDTO createProductDTO) {
-        if(productRepository.findById(createProductDTO.getProductId()).isEmpty())
+        if(productRepository.findByName(createProductDTO.getName()).isEmpty())
         {
             var product = Product.builder()
                     .productId(createProductDTO.getProductId())
@@ -179,8 +179,9 @@ public class ProductServiceImpl implements ProductService {
                     .description(createProductDTO.getDescription())
                     .material(createProductDTO.getMaterial())
                     .quantity(createProductDTO.getQuantity())
-                    .status(createProductDTO.getStatus())
+                    .status("active")
                     .build();
+            productRepository.save(product);
             return product;
         }
         else return null;

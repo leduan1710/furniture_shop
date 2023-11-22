@@ -96,40 +96,40 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order UpdateOrder(Integer orderId) {
+    public String UpdateOrder(Integer orderId) {
         Optional<Order> order=orderRepository.findById(orderId);
 
-        String notificationMessage = null;
+        String message = null;
         if (order.isPresent() && !order.get().getState().isEmpty())
         {
             switch (order.get().getState()) {
                 case "processing" -> {
                     order.get().setState("processed");
-                    notificationMessage = "Đơn hàng đã được xác nhận";
+                    message = "Đơn hàng đã được xác nhận";
                 }
                 case "processed" -> {
                     order.get().setState("delivering");
-                    notificationMessage = "Đơn hàng đang được vận chuyển";
+                    message = "Đơn hàng đang được vận chuyển";
                 }
                 case "delivering" -> {
                     order.get().setState("delivered");
-                    notificationMessage = "Đơn hàng đã được giao";
+                    message = "Đơn hàng đã được giao";
                     order.get().setPaid(true);
                 }
             }
             if (order.get().getPaid())
-                pointCalculate(order.get().getUser().getUserId(), order);
+                pointCalculate(order.get().getUser().getUserId(), orderId);
             /// Tạo thông báo
             Notification notification=new Notification();
             notification.setState(false);
-            notification.setDescription(notificationMessage);
-            notification.setUser(userRepository.findById(order.get().getUser().getUserId()).get());
+            notification.setDescription(message);
+            notification.setUser(order.get().getUser());
             notification.setDate(new Date());
             notification.setOrder(order.get());
             notificationRepository.save(notification);
-            return order.get();
+            return "Chuyển trạng thái thành công";
         }
-        else return null;
+        else return "Chuyển trạng thái thất bại";
     }
 
     @Override
@@ -194,15 +194,16 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void pointCalculate(Integer userId, Optional<Order> order)
+    private void pointCalculate(Integer userId, Integer orderId)
     {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isPresent())
         {
+            Optional<Order> order = orderRepository.findById(orderId);
             int point = (int)(user.get().getPoint() + order.get().getCount()*(order.get().getProduct().getPrice())/100000);
             user.get().setPoint(point);
-            if (point >=0 && point <= 100)
+            if (point >0 && point <= 100)
                 user.get().setRankUser(RankEnum.BRONZE);
             else if (point<=200)
                 user.get().setRankUser(RankEnum.SILVER);
@@ -213,7 +214,6 @@ public class OrderServiceImpl implements OrderService {
             else if (point<=500)
                 user.get().setRankUser(RankEnum.DIAMOND);
         }
-
     }
 
 }
