@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.Repository;
 
 import hcmute.it.furnitureshop.Entity.Category;
+import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.Room;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.autoconfigure.quartz.QuartzTransactionManager;
@@ -24,4 +25,6 @@ public interface CategoryRepository extends CrudRepository<Category,Integer> {
     Optional<Category> findById(Integer integer);
 
     Category findByName(String categoryName);
+
+    Optional<Category> findCategoryByProduct(Product product);
 }

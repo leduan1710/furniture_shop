@@ -29,4 +29,5 @@ public interface ProductService {
     String deleteProduct(Integer productId);
     Product createProduct(ProductDetailDTO createProductDTO);
     Iterable<Product> findByDiscountIsNotNull();
+    Iterable<Product> findProductNearProduct(Integer productId);
 }

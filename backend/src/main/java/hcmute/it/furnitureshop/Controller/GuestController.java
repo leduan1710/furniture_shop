@@ -150,4 +150,8 @@ public class GuestController {
     public ResponseEntity<Iterable<ProductDTO>> getProductByDiscountIsNotNull(){
         return ResponseEntity.ok(changeToDTOService.changeListProductToDTO(productService.findByDiscountIsNotNull()));
     }
+    @GetMapping("/getProductNearProduct/{productId}")
+    public ResponseEntity<Iterable<ProductDTO>> getProductNearProduct(@PathVariable("productId")Integer productId){
+        return ResponseEntity.ok(changeToDTOService.changeListProductToDTO(productService.findProductNearProduct(productId)));
+    }
 }

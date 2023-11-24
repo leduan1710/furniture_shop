@@ -201,10 +201,10 @@ public class UserController {
         return vnpayService.getPaymentUrl(price,productCheckOutDTO,token);
     }
 
-    @GetMapping("/getNotification")
-    public Iterable<Notification> getNotificationByUser(){
+    @GetMapping("/getNotification/{limit}")
+    public Iterable<Notification> getNotificationByUser(@PathVariable("limit")Integer limit){
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        return notificationService.findByUser(user.get());
+        return notificationService.findByUser(user.get(),limit);
     }
 
     @PostMapping("/checkNotification/{notificationId}")
