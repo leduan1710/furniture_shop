@@ -145,4 +145,9 @@ public class GuestController {
     public ResponseEntity<Iterable<FavoriteDTO>> getFavoritesByProduct(@PathVariable("productId")Integer productId){
         return ResponseEntity.status(200).body(changeToDTOService.changeListFavoriteToDTO(favoriteService.findByProduct(productId)));
     }
+
+    @GetMapping("/getProductByDiscountNotNull")
+    public ResponseEntity<Iterable<ProductDTO>> getProductByDiscountIsNotNull(){
+        return ResponseEntity.ok(changeToDTOService.changeListProductToDTO(productService.findByDiscountIsNotNull()));
+    }
 }

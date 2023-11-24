@@ -186,4 +186,9 @@ public class ProductServiceImpl implements ProductService {
         }
         else return null;
     }
+
+    @Override
+    public Iterable<Product> findByDiscountIsNotNull() {
+        return productRepository.findByDiscountIsNotNull();
+    }
 }

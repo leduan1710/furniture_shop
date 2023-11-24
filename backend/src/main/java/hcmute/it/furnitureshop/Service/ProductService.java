@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    public Iterable<Product> getTop8Product();
-    public Optional<Product> getProductById(Integer productId);
-    public Iterable<Product> getProductByNameContaining(String name);
+    Iterable<Product> getTop8Product();
+     Optional<Product> getProductById(Integer productId);
+     Iterable<Product> getProductByNameContaining(String name);
     Iterable<Product> getProductsByCategory(Integer categoryId);
     Iterable<Product> getProductByCategoryAndPriceDesc(Category category);
     Iterable<Product> getProductByCategoryAndPriceAsc(Category category);
@@ -20,12 +20,13 @@ public interface ProductService {
     Optional<Product> findById(Integer productId);
     Iterable<Product> getAll();
     Optional<Product> findProductByOrderId(Integer orderId);
-    public <S extends Product> void save(Product product);
-    public List<ProductDetailDTO> getAllProductsWithCategoryName();
-    public Iterable<Product> getProductByRoom(Integer roomId);
-    public Iterable<Product> getProductsByCategoryAndDiscount(Integer categoryId);
-    public Iterable<Product> getProductSaleByRoom(Integer roomId);
+    <S extends Product> void save(Product product);
+     List<ProductDetailDTO> getAllProductsWithCategoryName();
+     Iterable<Product> getProductByRoom(Integer roomId);
+     Iterable<Product> getProductsByCategoryAndDiscount(Integer categoryId);
+     Iterable<Product> getProductSaleByRoom(Integer roomId);
     String updateProduct(ProductDetailDTO productDTO);
     String deleteProduct(Integer productId);
     Product createProduct(ProductDetailDTO createProductDTO);
+    Iterable<Product> findByDiscountIsNotNull();
 }
