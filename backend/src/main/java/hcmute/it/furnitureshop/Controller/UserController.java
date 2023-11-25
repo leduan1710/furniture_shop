@@ -222,4 +222,9 @@ public class UserController {
     public ResponseEntity<String> restoredOrder(@PathVariable("orderId")Integer orderId){
             return ResponseEntity.ok(orderService.RestoreOrder(orderId));
     }
+    @GetMapping("/getFavoritesByProduct/{productId}")
+    public ResponseEntity<Iterable<FavoriteDTO>> getFavoritesByProduct(@PathVariable("productId")Integer productId){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        return ResponseEntity.status(200).body(changeToDTOService.changeListFavoriteToDTO(favoriteService.findByProductAndUser(productId,user.get())));
+    }
 }

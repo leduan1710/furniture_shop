@@ -141,10 +141,6 @@ public class GuestController {
     public void paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException {
        vnpayService.PaymentCallBack(queryParams,response);
     }
-    @GetMapping("/getFavoritesByProduct/{productId}")
-    public ResponseEntity<Iterable<FavoriteDTO>> getFavoritesByProduct(@PathVariable("productId")Integer productId){
-        return ResponseEntity.status(200).body(changeToDTOService.changeListFavoriteToDTO(favoriteService.findByProduct(productId)));
-    }
 
     @GetMapping("/getProductByDiscountNotNull")
     public ResponseEntity<Iterable<ProductDTO>> getProductByDiscountIsNotNull(){

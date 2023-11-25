@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface FavoriteService {
     public Iterable<Favorite> findByUser(User user);
-    public Iterable<Favorite> findByProduct(Integer productId);
+    public Iterable<Favorite> findByProductAndUser(Integer productId,User user);
 
     public <S extends Favorite> void saveFavorite(Integer productId,Integer userId);
     void deleteByUserAndProduct(Integer userId,Integer productId);
