@@ -186,4 +186,25 @@ public class ProductServiceImpl implements ProductService {
         }
         else return null;
     }
+
+    @Override
+    public Iterable<Product> findByDiscountIsNotNull() {
+        return productRepository.findByDiscountIsNotNull();
+    }
+
+    @Override
+    public Iterable<Product> findProductNearProduct(Integer productId) {
+        Optional<Product> productById=productRepository.findById(productId);
+        Optional<Category> category=categoryRepository.findCategoryByProduct(productById.get());
+        ArrayList<Product> productsReturn=new ArrayList<>();
+        Iterable<Product> products= productRepository.findProductsByCategory(category.get());
+        products.forEach(product ->{
+            if(product.getProductId()==productById.get().getProductId()){
+
+            }else{
+                productsReturn.add(product);
+            }
+        });
+        return productsReturn;
+    }
 }

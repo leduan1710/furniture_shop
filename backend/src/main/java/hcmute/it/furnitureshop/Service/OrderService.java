@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface OrderService {
     public <S extends Order> void save(User user, OrderRequestDTO orderRequestDTO, Integer productId);
-    public void CancelOrder(Integer orderId,User user);
+    public String CancelOrder(Integer orderId);
     String UpdateOrder(Integer orderId);
-
-    public void RestoreOrder(Integer orderId, User user);
+    public String RestoreOrder(Integer orderId);
     public Iterable<Order> findByUser(User user);
     public Optional<Order> findById(Integer orderId);
+    public Iterable<Order> findOrderByUserAndState(String username,String state);
 }

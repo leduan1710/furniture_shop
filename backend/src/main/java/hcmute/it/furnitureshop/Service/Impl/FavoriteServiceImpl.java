@@ -32,9 +32,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    public Iterable<Favorite> findByProduct(Integer productId) {
+    public Iterable<Favorite> findByProductAndUser(Integer productId,User user) {
         Optional<Product> product= productRepository.findById(productId);
-        return favoriteRepository.findByProduct(product.get());
+        return favoriteRepository.findByProductAndUser(product.get(),user);
     }
 
     @Override

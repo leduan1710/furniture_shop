@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Service
@@ -22,8 +24,17 @@ public class NotificationServiceImpl implements NotificationService {
     NotificationRepository notificationRepository;
 
     @Override
-    public Iterable<Notification> findByUser(User user) {
-        return notificationRepository.findNotificationsByUserOrderByDateDesc(user);
+    public Iterable<Notification> findByUser(User user,Integer limit) {
+        Iterable<Notification> notifications=notificationRepository.findNotificationsByUserOrderByDateDesc(user);
+        AtomicInteger index= new AtomicInteger();
+        ArrayList<Notification> notificationArrayList=new ArrayList<>();
+        notifications.forEach(notification -> {
+            if(index.get() <limit){
+                notificationArrayList.add(notification);
+            }
+            index.addAndGet(1);
+        });
+        return notificationArrayList;
     }
 
     @Override

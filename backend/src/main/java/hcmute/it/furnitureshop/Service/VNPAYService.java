@@ -128,6 +128,8 @@ public class VNPAYService {
                     order.setPaid(true);
                     order.setNowDelivery(Boolean.valueOf(nowDelivery));
                     orderRepository.save(order);
+                }else {
+                    response.sendRedirect("http://localhost:3000/checkout/fail");
                 }
             }
             response.sendRedirect("http://localhost:3000/checkout/success");

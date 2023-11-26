@@ -9,6 +9,7 @@ import hcmute.it.furnitureshop.Service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -183,56 +184,10 @@ public class UserController {
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
         return ResponseEntity.ok(changeToDTOService.changeListOrderToDTO(orderService.findByUser(user.get())));
     }
-    @GetMapping("/findOrdersByUserProcessing")
-    public ResponseEntity<Iterable<OrderDTO>> findOrdersByUserProcessing(){
-        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        ArrayList<OrderDTO> orderDTOS=new ArrayList<>();
-        ArrayList<OrderDTO> listOrders=changeToDTOService.changeListOrderToDTO(orderService.findByUser(user.get()));
-        listOrders.forEach(order -> {
-            if(order.getState().equals("processing")){
-                orderDTOS.add(order);
-            }
-        });
-        return ResponseEntity.ok(orderDTOS);
-    }
+    @GetMapping("/findOrdersByUserAndState/{state}")
+    public ResponseEntity<Iterable<OrderDTO>> findOrdersByUserProcessing(@PathVariable("state")String state){
+        return ResponseEntity.ok(changeToDTOService.changeListOrderToDTO(orderService.findOrderByUserAndState(jwtService.extractUserName(getToken()),state)));
 
-    @GetMapping("/findOrdersByUserProcessed")
-    public ResponseEntity<Iterable<OrderDTO>> findOrdersByUserProcessed(){
-        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        ArrayList<OrderDTO> orderDTOS=new ArrayList<>();
-        ArrayList<OrderDTO> listOrders=changeToDTOService.changeListOrderToDTO(orderService.findByUser(user.get()));
-        listOrders.forEach(order -> {
-            if(order.getState().equals("processed")){
-                orderDTOS.add(order);
-            }
-        });
-        return ResponseEntity.ok(orderDTOS);
-    }
-
-    @GetMapping("/findOrdersByUserCanceled")
-    public ResponseEntity<Iterable<OrderDTO>> findOrdersByUserCanceled(){
-        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        ArrayList<OrderDTO> orderDTOS=new ArrayList<>();
-        ArrayList<OrderDTO> listOrders=changeToDTOService.changeListOrderToDTO(orderService.findByUser(user.get()));
-        listOrders.forEach(order -> {
-            if(order.getState().equals("canceled")){
-                orderDTOS.add(order);
-            }
-        });
-        return ResponseEntity.ok(orderDTOS);
-    }
-
-    @GetMapping("/findOrdersByUserDelivered")
-    public ResponseEntity<Iterable<OrderDTO>> findOrdersByUserDelivered(){
-        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        ArrayList<OrderDTO> orderDTOS=new ArrayList<>();
-        ArrayList<OrderDTO> listOrders=changeToDTOService.changeListOrderToDTO(orderService.findByUser(user.get()));
-        listOrders.forEach(order -> {
-            if(order.getState().equals("delivered")){
-                orderDTOS.add(order);
-            }
-        });
-        return ResponseEntity.ok(orderDTOS);
     }
 
     @GetMapping("/findProductByOrderId/{orderId}")
@@ -246,10 +201,10 @@ public class UserController {
         return vnpayService.getPaymentUrl(price,productCheckOutDTO,token);
     }
 
-    @GetMapping("/getNotification")
-    public Iterable<Notification> getNotificationByUser(){
+    @GetMapping("/getNotification/{limit}")
+    public Iterable<Notification> getNotificationByUser(@PathVariable("limit")Integer limit){
         Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        return notificationService.findByUser(user.get());
+        return notificationService.findByUser(user.get(),limit);
     }
 
     @PostMapping("/checkNotification/{notificationId}")
@@ -259,21 +214,17 @@ public class UserController {
         notificationService.saveNotification(notification.get());
     }
     @PostMapping("/canceledOrder/{orderId}")
-    public void canceledOrder(@PathVariable("orderId")Integer orderId){
-        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-        orderService.CancelOrder(orderId,user.get());
+    public ResponseEntity<String> canceledOrder(@PathVariable("orderId")Integer orderId){
+        return ResponseEntity.ok(orderService.CancelOrder(orderId));
     }
 
     @PostMapping("/restoredOrder/{orderId}")
     public ResponseEntity<String> restoredOrder(@PathVariable("orderId")Integer orderId){
-        try{
-            Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
-            orderService.RestoreOrder(orderId,user.get());
-            return ResponseEntity.status(204).body("Đặt hàng thành công");
-        }catch (Exception e){
-            return ResponseEntity.status(200).body("Hết hàng");
-        }
-
-
+            return ResponseEntity.ok(orderService.RestoreOrder(orderId));
+    }
+    @GetMapping("/getFavoritesByProduct/{productId}")
+    public ResponseEntity<Iterable<FavoriteDTO>> getFavoritesByProduct(@PathVariable("productId")Integer productId){
+        Optional<User> user=userService.findByName(jwtService.extractUserName(getToken()));
+        return ResponseEntity.status(200).body(changeToDTOService.changeListFavoriteToDTO(favoriteService.findByProductAndUser(productId,user.get())));
     }
 }
