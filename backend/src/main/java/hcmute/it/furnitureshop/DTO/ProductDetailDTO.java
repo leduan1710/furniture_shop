@@ -23,4 +23,5 @@ public class ProductDetailDTO {
     private String categoryName;
     private Double percentDiscount;
     private String title;
+
 }
