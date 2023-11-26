@@ -3,6 +3,7 @@ package hcmute.it.furnitureshop.Service.Impl;
 import hcmute.it.furnitureshop.DTO.ProductDTO;
 import hcmute.it.furnitureshop.DTO.ProductDetailDTO;
 import hcmute.it.furnitureshop.Entity.Category;
+import hcmute.it.furnitureshop.Entity.Discount;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Repository.CategoryRepository;
@@ -206,5 +207,33 @@ public class ProductServiceImpl implements ProductService {
             }
         });
         return productsReturn;
+    }
+
+    @Override
+    public ProductDetailDTO getById(Integer productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        Discount discount = product.get().getDiscount();
+        Double percentDiscount;
+        if(discount != null)
+            percentDiscount = discount.getPercentDiscount();
+        else {
+            percentDiscount = null;
+        }
+        return product.map(value -> ProductDetailDTO.builder()
+                .productId(value.getProductId())
+                .name(value.getName())
+                .image(value.getImage())
+                .price(value.getPrice())
+                .size(value.getSize())
+                .categoryName(value.getCategory().getName())
+                .numberProductSold(value.getNumberProductSold())
+                .material(value.getMaterial())
+                .quantity(value.getQuantity())
+                .description(value.getDescription())
+                .status(value.getStatus())
+                .numberFavorite(value.getFavorites().size())
+                .numberRating(value.getRatings().size())
+                .percentDiscount(percentDiscount)
+                .build()).orElse(null);
     }
 }

@@ -1,6 +1,5 @@
 package hcmute.it.furnitureshop.DTO;
 
-import hcmute.it.furnitureshop.Common.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class BestUser implements Comparable<BestUser>{
     private Integer userId;
-    private String username;
     private String name;
-    private String phone;
-    private String image;
-    private String status;
-    private String address;
-    private String role;
+    private Integer point;
+    private String rank;
+    @Override
+    public int compareTo(BestUser o) {
+        return o.getPoint().compareTo(this.point);
+    }
 }

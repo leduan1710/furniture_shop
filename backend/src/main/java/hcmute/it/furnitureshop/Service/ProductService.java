@@ -30,4 +30,5 @@ public interface ProductService {
     Product createProduct(ProductDetailDTO createProductDTO);
     Iterable<Product> findByDiscountIsNotNull();
     Iterable<Product> findProductNearProduct(Integer productId);
+    ProductDetailDTO getById(Integer productId);
 }
