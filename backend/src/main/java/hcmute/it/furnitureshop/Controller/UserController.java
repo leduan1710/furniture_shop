@@ -80,11 +80,19 @@ public class UserController {
     public ResponseEntity<UserDTO> saveUser(@RequestBody UpdateUserDTO userDTO){
             Optional<User> userOld=userService.findByName(jwtService.extractUserName(getToken()));
             userOld.get().setName(userDTO.getName());
-            userOld.get().setAddress(userDTO.getAddress());
+            userOld.get().setApartmentNumber(userDTO.getApartmentNumber());
+            userOld.get().setCity(userDTO.getCity());
+            userOld.get().setDistrict(userDTO.getDistrict());
+            userOld.get().setWard(userDTO.getWard());
             userService.saveUser(userOld.get());
             return ResponseEntity.status(200).body(changeToDTOService.changeUserToDTO(userService.findById(userOld.get().getUserId())));
     }
-
+    @PatchMapping("/saveImgUser")
+    public ResponseEntity<UserDTO> saveImgUser(@RequestBody UpdateUserDTO userDTO){
+        Optional<User> userOld=userService.findByName(jwtService.extractUserName(getToken()));
+        userOld.get().setImage(userDTO.getImage());
+        return ResponseEntity.status(200).body(changeToDTOService.changeUserToDTO(userService.findById(userOld.get().getUserId())));
+    }
     @GetMapping("/favoriteByUser/{userId}")
     public ResponseEntity<Iterable<FavoriteDTO>> findFavoritesByUser(@PathVariable("userId") Integer userId){
         try{

@@ -12,10 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDTO {
     private Integer userId;
+    private String username;
     private String name;
     private String phone;
     private String image;
     private String status;
-    private String address;
+    private String apartmentNumber;
+    private int city;
+    private int district;
+    private int ward;
     private String role;
 }
