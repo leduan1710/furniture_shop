@@ -11,18 +11,14 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDTO {
+public class OrderDashboardDTO implements Comparable<OrderDashboardDTO>{
     private Integer orderId;
-    private int count;
-    private String state;
-    private Date date;
     private Date dateUpdate;
-    private Boolean paid;
-    private Boolean nowDelivery;
-    private Integer productId;
-    private String productName;
-    private String imageProduct;
-    private long productPrice;
-    private String userName;
     private long total;
+    private String userName;
+
+    @Override
+    public int compareTo(OrderDashboardDTO o) {
+        return o.getDateUpdate().compareTo(this.dateUpdate);
+    }
 }

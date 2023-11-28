@@ -70,6 +70,7 @@ public class GuestController {
     }
     @RequestMapping("/category")
     public ResponseEntity<Iterable<CategoryDTO>> getAllCategory(){
+
         return ResponseEntity.status(200).body(changeToDTOService.changeListCategoryToDTO(categoryService.getAll()));
     }
     @RequestMapping("/product/top8Product")

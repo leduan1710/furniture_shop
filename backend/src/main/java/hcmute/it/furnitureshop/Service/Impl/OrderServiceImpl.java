@@ -1,7 +1,9 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.Common.RankEnum;
+import hcmute.it.furnitureshop.DTO.LineChartDTO;
 import hcmute.it.furnitureshop.DTO.OrderDTO;
+import hcmute.it.furnitureshop.DTO.OrderDashboardDTO;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
 import hcmute.it.furnitureshop.Entity.Notification;
 import hcmute.it.furnitureshop.Entity.Order;
@@ -21,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
@@ -96,43 +100,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String UpdateOrder(Integer orderId) {
-        Optional<Order> order=orderRepository.findById(orderId);
-
-        String message = null;
-        if (order.isPresent() && !order.get().getState().isEmpty())
-        {
-            switch (order.get().getState()) {
-                case "processing" -> {
-                    order.get().setState("processed");
-                    message = "Đơn hàng đã được xác nhận";
-                }
-                case "processed" -> {
-                    order.get().setState("delivering");
-                    message = "Đơn hàng đang được vận chuyển";
-                }
-                case "delivering" -> {
-                    order.get().setState("delivered");
-                    message = "Đơn hàng đã được giao";
-                    order.get().setPaid(true);
-                }
-            }
-            if (order.get().getPaid())
-                pointCalculate(order.get().getUser().getUserId(), orderId);
-            /// Tạo thông báo
-            Notification notification=new Notification();
-            notification.setState(false);
-            notification.setDescription(message);
-            notification.setUser(order.get().getUser());
-            notification.setDate(new Date());
-            notification.setOrder(order.get());
-            notificationRepository.save(notification);
-            return "Chuyển trạng thái thành công";
-        }
-        else return "Chuyển trạng thái thất bại";
-    }
-
-    @Override
     public String RestoreOrder(Integer orderId) {
         Optional<Order> order=orderRepository.findById(orderId);
         if(order.isPresent()){
@@ -194,6 +161,99 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public List<OrderDTO> getAllOrder() {
+        List<OrderDTO> orderDTOS= new ArrayList<>();
+        orderRepository.findAll().forEach(order -> {
+            orderDTOS.add(OrderDTO.builder().orderId(order.getOrderId())
+                    .count(order.getCount())
+                    .date(order.getDate())
+                    .state(order.getState())
+                    .paid(order.getPaid())
+                    .dateUpdate(order.getDateUpdate())
+                    .nowDelivery(order.getNowDelivery())
+                    .productId(order.getProduct().getProductId())
+                    .productName(order.getProduct().getName())
+                    .productPrice(order.getProduct().getPrice())
+                    .imageProduct(order.getProduct().getImage())
+                    .userName(order.getUser().getName())
+                    .total((int) (order.getCount()* order.getProduct().getPrice()))
+                    .build());
+
+        });
+        return orderDTOS;
+    }
+
+    @Override
+    public String deleteOrder(Integer orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if(order.isPresent())
+        {
+            orderRepository.deleteById(orderId);
+            return "Xóa đơn hàng thành công";
+        }
+        return "Xóa đơn hàng thất bại";
+    }
+
+    @Override
+    public OrderDTO getById(Integer orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if(order.isPresent()){
+            OrderDTO orderDTO = OrderDTO.builder().orderId(order.get().getOrderId())
+                    .count(order.get().getCount())
+                    .date(order.get().getDate())
+                    .state(order.get().getState())
+                    .paid(order.get().getPaid())
+                    .dateUpdate(order.get().getDateUpdate())
+                    .nowDelivery(order.get().getNowDelivery())
+                    .productId(order.get().getProduct().getProductId())
+                    .productName(order.get().getProduct().getName())
+                    .productPrice(order.get().getProduct().getPrice())
+                    .imageProduct(order.get().getProduct().getImage())
+                    .userName(order.get().getUser().getName())
+                    .total((int) (order.get().getCount()* order.get().getProduct().getPrice()))
+                    .build();
+            return orderDTO;
+        }
+        return null;
+    }
+
+    @Override
+    public String UpdateOrderState(Integer orderId) {
+        Optional<Order> order=orderRepository.findById(orderId);
+        String message = null;
+        if (order.isPresent() && !order.get().getState().isEmpty())
+        {
+            switch (order.get().getState()) {
+                case "processing" -> {
+                    order.get().setState("processed");
+                    message = "Đơn hàng đã được xác nhận";
+                }
+                case "processed" -> {
+                    order.get().setState("delivering");
+                    message = "Đơn hàng đang được vận chuyển";
+                }
+                case "delivering" -> {
+                    order.get().setState("delivered");
+                    message = "Đơn hàng đã được giao";
+                    order.get().setPaid(true);
+                }
+            }
+            if (order.get().getPaid())
+                pointCalculate(order.get().getUser().getUserId(), orderId);
+            /// Tạo thông báo
+            Notification notification=new Notification();
+            notification.setState(false);
+            notification.setDescription(message);
+            notification.setUser(order.get().getUser());
+            notification.setDate(new Date());
+            notification.setOrder(order.get());
+            notificationRepository.save(notification);
+            return "Chuyển trạng thái thành công";
+        }
+        else return "Chuyển trạng thái thất bại";
+    }
+
     private void pointCalculate(Integer userId, Integer orderId)
     {
         Optional<User> user = userRepository.findById(userId);
@@ -216,4 +276,74 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public int totalOrder() {
+        AtomicInteger totalOrder = new AtomicInteger();
+        Date oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(new Date().getMonth()-1);
+        orderRepository.findAll().forEach(order -> {
+            if(!order.getState().equals("canceled"))
+                if(order.getDateUpdate().after(oneMonthAgo))
+                    totalOrder.getAndIncrement();
+        });
+        return totalOrder.get();
+    }
+    @Override
+    public long totalRevenueOrder() {
+        AtomicLong totalOrder = new AtomicLong();
+        Date oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(new Date().getMonth()-1);
+        orderRepository.findAll().forEach(order -> {
+            if(order.getState().equals("delivered")) {
+                if (order.getDateUpdate().after(oneMonthAgo))
+                    totalOrder.set(totalOrder.get() + order.getCount() * order.getProduct().getPrice());
+            }
+        });
+        return totalOrder.get();
+    }
+
+    @Override
+    public ArrayList<LineChartDTO> getDataLineChart() {
+        ArrayList<LineChartDTO> lineChartDTOS = new ArrayList<>();
+        orderRepository.findAll().forEach(order -> {
+            lineChartDTOS.add(LineChartDTO.builder().productId(order.getProduct().getProductId())
+                    .revenue(order.getProduct().getPrice()*order.getCount()).build());
+        });
+        Collections.sort(lineChartDTOS);
+        ArrayList<LineChartDTO> result = new ArrayList<>();
+        for(int i = 0; i<lineChartDTOS.size()-1; i++)
+        {
+            if(lineChartDTOS.get(i).getProductId().equals(lineChartDTOS.get(i+1).getProductId()))
+            {
+                lineChartDTOS.set(i,
+                        new LineChartDTO(lineChartDTOS.get(i).getProductId()
+                                , lineChartDTOS.get(i).getRevenue()+lineChartDTOS.get(i+1).getRevenue()));
+                lineChartDTOS.remove(i+1);
+            }
+        }
+        for(int i = 0; i<lineChartDTOS.size() && i<5 ; i++)
+        {
+            result.add(lineChartDTOS.get(i));
+        }
+        return (result);
+    }
+
+    @Override
+    public ArrayList<OrderDashboardDTO> get10RecentOrder() {
+        ArrayList<OrderDashboardDTO> orderDTOS = new ArrayList<>();
+        orderRepository.findAll().forEach(order -> {
+            orderDTOS.add(OrderDashboardDTO.builder().userName(order.getUser().getName())
+                    .dateUpdate(order.getDateUpdate())
+                    .orderId(order.getOrderId())
+                    .total(order.getProduct().getPrice()*order.getCount()).build());
+
+        });
+        Collections.sort(orderDTOS);
+        ArrayList<OrderDashboardDTO> result = new ArrayList<>();
+        for(int i = 0; i<orderDTOS.size() && i < 10; i++)
+        {
+            result.add(orderDTOS.get(i));
+        }
+        return (result);
+    }
 }

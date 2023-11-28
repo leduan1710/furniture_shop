@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDTO {
-    private int categoryId;
-    private String name;
-    private String image;
-    private String icon;
-    private int numberProduct;
-
+public class DataCardDashboard {
+    public int totalProductSold;
+    public long totalRevenue;
+    public int totalNewUser;
 }

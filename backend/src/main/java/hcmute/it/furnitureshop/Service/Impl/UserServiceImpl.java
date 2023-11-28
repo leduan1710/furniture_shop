@@ -2,6 +2,7 @@ package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.Auth.RegisterRequest;
 import hcmute.it.furnitureshop.Common.RoleEnum;
+import hcmute.it.furnitureshop.DTO.BestUser;
 import hcmute.it.furnitureshop.DTO.CreateUserDTO;
 import hcmute.it.furnitureshop.DTO.UserDTO;
 import hcmute.it.furnitureshop.Entity.User;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +62,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById(userId);
         return user.map(value -> UserDTO.builder()
                 .userId(value.getUserId())
+                .username(value.getUsername())
                 .name(value.getName())
                 .phone(value.getPhone())
                 .apartmentNumber(value.getApartmentNumber())
@@ -117,5 +116,35 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(userId);
             return "Xóa người dùng thành công";
         }else return "Không tồn tại người dùng trong hệ thống";
+    }
+
+    @Override
+    public int getTotalNewUser() {
+        int totalNewUser;
+        Date oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(new Date().getMonth()-1);
+        totalNewUser = (int) userRepository.findAll().stream().filter(user -> user.getCreateDate().after(oneMonthAgo)).count();
+        return totalNewUser;
+    }
+
+    @Override
+    public ArrayList<BestUser> get10RecentOrder() {
+        ArrayList<BestUser> bestUsers = new ArrayList<>();
+        List<User> users = userRepository.findAll();
+        if(users.isEmpty()) {
+            userRepository.findAll().forEach(user -> {
+                bestUsers.add(BestUser.builder().name(user.getName())
+                        .userId(user.getUserId())
+                        .point(user.getPoint())
+                        .rank(String.valueOf(user.getRankUser())).build());
+            });
+            Collections.sort(bestUsers);
+            ArrayList<BestUser> result = new ArrayList<>();
+            for (int i = 0; i < bestUsers.size() && i < 3; i++) {
+                result.add(bestUsers.get(i));
+            }
+            return (result);
+        }
+        return null;
     }
 }
