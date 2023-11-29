@@ -86,7 +86,10 @@ public class UserServiceImpl implements UserService {
                     .createDate(new Date())
                     .image(request.getImage())
                     .role(RoleEnum.USER)
-                    .address(request.getAddress())
+                    .apartmentNumber(request.getApartmentNumber())
+                    .city(request.getCity())
+                    .ward(request.getWard())
+                    .district(request.getDistrict())
                     .status("active")
                     .build();
             userRepository.save(user);

@@ -14,5 +14,8 @@ public class CreateUserDTO {
     private String phone;
     private String image;
     private String password;
-    private String address;
+    private String apartmentNumber;
+    private int city;
+    private int district;
+    private int ward;
 }
