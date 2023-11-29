@@ -33,9 +33,9 @@ public class User implements UserDetails {
     private String name;
     private String image;
     private String apartmentNumber;
-    private int city;
-    private int district;
-    private int ward;
+    private String city;
+    private String district;
+    private String ward;
     private Date createDate;
     private String phone;
     private String status;

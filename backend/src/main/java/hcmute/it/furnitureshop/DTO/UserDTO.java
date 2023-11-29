@@ -18,8 +18,8 @@ public class UserDTO {
     private String image;
     private String status;
     private String apartmentNumber;
-    private int city;
-    private int district;
-    private int ward;
+    private String city;
+    private String district;
+    private String ward;
     private String role;
 }
