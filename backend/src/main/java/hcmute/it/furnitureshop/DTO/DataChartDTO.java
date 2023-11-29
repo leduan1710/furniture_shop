@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class DataChartDTO implements Comparable<DataChartDTO>{
     private Integer productId;
     private Long revenue;
-
+    private String productName;
     @Override
     public int compareTo(DataChartDTO other) {
         return other.getRevenue().compareTo(this.revenue);

@@ -22,5 +22,5 @@ public interface UserService {
     public String deleteUser(Integer userId);
     public String updateStatusUser(Integer userId);
     int getTotalNewUser();
-    ArrayList<BestUser> get10RecentOrder();
+    ArrayList<BestUser> getTop3User();
 }

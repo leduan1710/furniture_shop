@@ -1,7 +1,7 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.Common.RankEnum;
-import hcmute.it.furnitureshop.DTO.LineChartDTO;
+import hcmute.it.furnitureshop.DTO.DataChartDTO;
 import hcmute.it.furnitureshop.DTO.OrderDTO;
 import hcmute.it.furnitureshop.DTO.OrderDashboardDTO;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
@@ -48,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
         order.setProduct(product.get());
         order.setState("processing");
         order.setDate(new Date());
+        order.setDateUpdate(new Date());
         order.setCount(orderRequestDTO.getCount());
         order.setPaid(orderRequestDTO.getPaid());
         order.setNowDelivery(orderRequestDTO.getNowDelivery());
@@ -303,27 +304,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<LineChartDTO> getDataLineChart() {
-        ArrayList<LineChartDTO> lineChartDTOS = new ArrayList<>();
+    public ArrayList<DataChartDTO> getDataChart() {
+        ArrayList<DataChartDTO> dataChartDTOS = new ArrayList<>();
         orderRepository.findAll().forEach(order -> {
-            lineChartDTOS.add(LineChartDTO.builder().productId(order.getProduct().getProductId())
-                    .revenue(order.getProduct().getPrice()*order.getCount()).build());
+            dataChartDTOS.add(
+                    DataChartDTO
+                            .builder()
+                            .productId(order.getProduct().getProductId())
+                            .revenue(order.getProduct().getPrice()*order.getCount())
+                            .productName(order.getProduct().getName())
+                            .build()
+            );
         });
-        Collections.sort(lineChartDTOS);
-        ArrayList<LineChartDTO> result = new ArrayList<>();
-        for(int i = 0; i<lineChartDTOS.size()-1; i++)
+        Collections.sort(dataChartDTOS);
+        ArrayList<DataChartDTO> result = new ArrayList<>();
+        for(int i = 0; i<dataChartDTOS.size()-1; i++)
         {
-            if(lineChartDTOS.get(i).getProductId().equals(lineChartDTOS.get(i+1).getProductId()))
+            if(dataChartDTOS.get(i).getProductId().equals(dataChartDTOS.get(i+1).getProductId()))
             {
-                lineChartDTOS.set(i,
-                        new LineChartDTO(lineChartDTOS.get(i).getProductId()
-                                , lineChartDTOS.get(i).getRevenue()+lineChartDTOS.get(i+1).getRevenue()));
-                lineChartDTOS.remove(i+1);
+                dataChartDTOS.set(i,
+                        new DataChartDTO(
+                                dataChartDTOS.get(i).getProductId()
+                                , dataChartDTOS.get(i).getRevenue()+dataChartDTOS.get(i+1).getRevenue()
+                                , dataChartDTOS.get(i).getProductName()
+                        )
+                );
+                dataChartDTOS.remove(i+1);
             }
         }
-        for(int i = 0; i<lineChartDTOS.size() && i<5 ; i++)
+        for(int i = 0; i<dataChartDTOS.size() && i<5 ; i++)
         {
-            result.add(lineChartDTOS.get(i));
+            result.add(dataChartDTOS.get(i));
         }
         return (result);
     }
@@ -332,6 +343,7 @@ public class OrderServiceImpl implements OrderService {
     public ArrayList<OrderDashboardDTO> get10RecentOrder() {
         ArrayList<OrderDashboardDTO> orderDTOS = new ArrayList<>();
         orderRepository.findAll().forEach(order -> {
+
             orderDTOS.add(OrderDashboardDTO.builder().userName(order.getUser().getName())
                     .dateUpdate(order.getDateUpdate())
                     .orderId(order.getOrderId())

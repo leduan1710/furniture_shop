@@ -83,6 +83,7 @@ public class UserServiceImpl implements UserService {
                     .createDate(new Date())
                     .image(request.getImage())
                     .role(RoleEnum.USER)
+                    .address(request.getAddress())
                     .status("active")
                     .build();
             userRepository.save(user);
@@ -125,10 +126,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ArrayList<BestUser> get10RecentOrder() {
+    public ArrayList<BestUser> getTop3User() {
         ArrayList<BestUser> bestUsers = new ArrayList<>();
         List<User> users = userRepository.findAll();
-        if(users.isEmpty()) {
+        if(!users.isEmpty()) {
             userRepository.findAll().forEach(user -> {
                 bestUsers.add(BestUser.builder().name(user.getName())
                         .userId(user.getUserId())

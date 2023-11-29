@@ -223,16 +223,16 @@ public class AdminController {
             return new ResponseDTO<>(dataCardDashboard, "Fail", "Không thành công");
         }
     }
-    @RequestMapping("/dataLineChart")
-    public ResponseDTO<ArrayList<LineChartDTO>> getDataLineChart()
+    @RequestMapping("/dataChart")
+    public ResponseDTO<ArrayList<DataChartDTO>> getDataLineChart()
     {
 
-        ArrayList<LineChartDTO> lineChartDTOS = orderService.getDataLineChart();
-        if(lineChartDTOS != null){
-            return new ResponseDTO<>(lineChartDTOS, "Ok", "Lấy dữ liệu thành công");
+        ArrayList<DataChartDTO> dataChartDTOS = orderService.getDataChart();
+        if(dataChartDTOS != null){
+            return new ResponseDTO<>(dataChartDTOS, "Ok", "Lấy dữ liệu thành công");
         }
         else{
-            return new ResponseDTO<>(lineChartDTOS, "Fail", "Không thành công");
+            return new ResponseDTO<>(dataChartDTOS, "Fail", "Không thành công");
         }
     }
     @RequestMapping("/10RecentOrder")
@@ -249,12 +249,12 @@ public class AdminController {
     @RequestMapping("/top3BestUser")
     public ResponseDTO<?> top3BestUser()
     {
-        ArrayList<BestUser> bestUsers = userService.get10RecentOrder();
+        ArrayList<BestUser> bestUsers = userService.getTop3User();
         if(bestUsers != null){
             return new ResponseDTO<>(bestUsers, "Ok", "Lấy thông tin thành công");
         }
         else{
-            return new ResponseDTO<>(null, "Fail", "Thất bại");
+            return new ResponseDTO<>(bestUsers, "Fail", "Thất bại");
         }
     }
 

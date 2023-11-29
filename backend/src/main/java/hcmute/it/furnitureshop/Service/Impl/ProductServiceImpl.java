@@ -7,6 +7,7 @@ import hcmute.it.furnitureshop.Entity.Discount;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Repository.CategoryRepository;
+import hcmute.it.furnitureshop.Repository.DiscountRepository;
 import hcmute.it.furnitureshop.Repository.ProductRepository;
 import hcmute.it.furnitureshop.Repository.RoomRepository;
 import hcmute.it.furnitureshop.Service.ProductService;
@@ -31,7 +32,8 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
     @Autowired
     private RoomRepository roomRepository;
-
+    @Autowired
+    private DiscountRepository discountRepository;
     @Override
     public Iterable<Product> getTop8Product() {
         return productRepository.findTop8ByProductSold();
@@ -148,8 +150,20 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     public String updateProduct(ProductDetailDTO productDTO) {
-        if(productRepository.findById(productDTO.getProductId()).isPresent())
+        Optional<Product> product = productRepository.findById(productDTO.getProductId());
+        if(product.isPresent())
         {
+            product.get().setName(productDTO.getName());
+            product.get().setImage(productDTO.getImage());
+            product.get().setPrice(productDTO.getPrice());
+            product.get().setSize(productDTO.getSize());
+            product.get().setCategory(categoryRepository.findByName(productDTO.getCategoryName()));
+            product.get().setMaterial(productDTO.getMaterial());
+            product.get().setQuantity(productDTO.getQuantity());
+            if(productDTO.getPercentDiscount() != null)
+                product.get().setDiscount(discountRepository.findByPercentDiscount(productDTO.getPercentDiscount()).get());
+            product.get().setStatus(productDTO.getStatus());
+            //productRepository.save(product.get());
             return "Đã cập nhật sản phẩm thành công";
         }
         return "Không tồn tại sản phẩm trong hệ thống";

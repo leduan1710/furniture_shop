@@ -1,6 +1,6 @@
 package hcmute.it.furnitureshop.Service;
 
-import hcmute.it.furnitureshop.DTO.LineChartDTO;
+import hcmute.it.furnitureshop.DTO.DataChartDTO;
 import hcmute.it.furnitureshop.DTO.OrderDTO;
 import hcmute.it.furnitureshop.DTO.OrderDashboardDTO;
 import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
@@ -24,6 +24,6 @@ public interface OrderService {
     String UpdateOrderState(Integer orderId);
     int totalOrder();
     long totalRevenueOrder();
-    ArrayList<LineChartDTO> getDataLineChart();
+    ArrayList<DataChartDTO> getDataChart();
     ArrayList<OrderDashboardDTO> get10RecentOrder();
 }

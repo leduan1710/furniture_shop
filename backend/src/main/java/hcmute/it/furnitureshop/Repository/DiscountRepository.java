@@ -1,7 +1,6 @@
-package hcmute.it.phoneshop.Repository;
+package hcmute.it.furnitureshop.Repository;
 
-import hcmute.it.phoneshop.Entity.Category;
-import hcmute.it.phoneshop.Entity.Discount;
+import hcmute.it.furnitureshop.Entity.Discount;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
