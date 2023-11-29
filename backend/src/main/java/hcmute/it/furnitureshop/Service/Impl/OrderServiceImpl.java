@@ -176,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
                     .productId(order.getProduct().getProductId())
                     .productName(order.getProduct().getName())
                     .productPrice(order.getProduct().getPrice())
-                    .imageProduct(order.getProduct().getImage())
+                    .imageProducts(order.getProduct().getImageProducts())
                     .userName(order.getUser().getName())
                     .total((int) (order.getCount()* order.getProduct().getPrice()))
                     .build());
@@ -210,7 +210,7 @@ public class OrderServiceImpl implements OrderService {
                     .productId(order.get().getProduct().getProductId())
                     .productName(order.get().getProduct().getName())
                     .productPrice(order.get().getProduct().getPrice())
-                    .imageProduct(order.get().getProduct().getImage())
+                    .imageProducts(order.get().getProduct().getImageProducts())
                     .userName(order.get().getUser().getName())
                     .total((int) (order.get().getCount()* order.get().getProduct().getPrice()))
                     .build();

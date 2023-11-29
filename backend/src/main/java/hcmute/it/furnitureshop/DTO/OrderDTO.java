@@ -1,11 +1,13 @@
 package hcmute.it.furnitureshop.DTO;
 
+import hcmute.it.furnitureshop.Entity.ImageProduct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,7 +23,7 @@ public class OrderDTO {
     private Boolean nowDelivery;
     private Integer productId;
     private String productName;
-    private String imageProduct;
+    private List<ImageProduct> imageProducts;
     private long productPrice;
     private String userName;
     private long total;

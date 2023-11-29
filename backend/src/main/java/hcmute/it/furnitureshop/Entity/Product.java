@@ -39,8 +39,9 @@ public class Product implements Serializable {
     private long quantity;
 
 
-    @Column(name = "urlImage", columnDefinition = "nvarchar(250)")
-    private String Image;
+    @JsonManagedReference
+    @OneToMany(mappedBy="product",cascade = CascadeType.ALL)
+    private List<ImageProduct> imageProducts;
 
     @JsonBackReference
     @ManyToOne

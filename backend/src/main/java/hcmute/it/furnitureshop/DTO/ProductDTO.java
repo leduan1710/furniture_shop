@@ -1,6 +1,7 @@
 package hcmute.it.furnitureshop.DTO;
 
 import hcmute.it.furnitureshop.Entity.Discount;
+import hcmute.it.furnitureshop.Entity.ImageProduct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class ProductDTO {
     private String name;
     private long price;
     private long quantity;
-    private String Image;
+    private List<ImageProduct> imageProducts;
     private String description;
     private String material;
     private String size;

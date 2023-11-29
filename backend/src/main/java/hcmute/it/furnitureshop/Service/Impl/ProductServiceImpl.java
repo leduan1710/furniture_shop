@@ -134,7 +134,7 @@ public class ProductServiceImpl implements ProductService {
             ProductDetailDTO productDetail = ProductDetailDTO.builder()
                     .productId(productJoinCate.getProductId())
                     .name(productJoinCate.getName())
-                    .image(productJoinCate.getImage())
+                    .imageProducts(productJoinCate.getImageProducts())
                     .price(productJoinCate.getPrice())
                     .size(productJoinCate.getSize())
                     .categoryName(productJoinCate.getCategory().getName())
@@ -154,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
         if(product.isPresent())
         {
             product.get().setName(productDTO.getName());
-            product.get().setImage(productDTO.getImage());
+            product.get().setImageProducts(productDTO.getImageProducts());
             product.get().setPrice(productDTO.getPrice());
             product.get().setSize(productDTO.getSize());
             product.get().setCategory(categoryRepository.findByName(productDTO.getCategoryName()));
@@ -186,7 +186,7 @@ public class ProductServiceImpl implements ProductService {
             var product = Product.builder()
                     .productId(createProductDTO.getProductId())
                     .name(createProductDTO.getName())
-                    .Image(createProductDTO.getImage())
+                    .imageProducts(createProductDTO.getImageProducts())
                     .price(createProductDTO.getPrice())
                     .size(createProductDTO.getSize())
                     .category(categoryRepository.findByName(createProductDTO.getCategoryName()))
@@ -236,7 +236,7 @@ public class ProductServiceImpl implements ProductService {
         return product.map(value -> ProductDetailDTO.builder()
                 .productId(value.getProductId())
                 .name(value.getName())
-                .image(value.getImage())
+                .imageProducts(value.getImageProducts())
                 .price(value.getPrice())
                 .size(value.getSize())
                 .categoryName(value.getCategory().getName())
