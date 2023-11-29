@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LineChartDTO implements Comparable<LineChartDTO>{
+public class DataChartDTO implements Comparable<DataChartDTO>{
     private Integer productId;
     private Long revenue;
 
     @Override
-    public int compareTo(LineChartDTO other) {
+    public int compareTo(DataChartDTO other) {
         return other.getRevenue().compareTo(this.revenue);
     }
 }
