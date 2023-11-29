@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateUserDTO {
     private String name;
-    private String address;
+    private String apartmentNumber;
+    private String image;
+    private int city;
+    private int district;
+    private int ward;
     private String phone;
     private String password;
 }

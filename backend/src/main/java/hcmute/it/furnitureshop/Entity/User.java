@@ -32,7 +32,10 @@ public class User implements UserDetails {
     private String password;
     private String name;
     private String image;
-    private String address;
+    private String apartmentNumber;
+    private int city;
+    private int district;
+    private int ward;
     private Date createDate;
     private String phone;
     private String status;
