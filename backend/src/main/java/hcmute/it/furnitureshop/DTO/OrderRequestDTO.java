@@ -13,4 +13,5 @@ public class OrderRequestDTO {
     Boolean paid;
     Boolean nowDelivery;
     int count;
+    long price;
 }

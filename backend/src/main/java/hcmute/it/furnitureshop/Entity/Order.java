@@ -52,4 +52,5 @@ public class Order implements Serializable{
     private Boolean paid;
 
     private Boolean nowDelivery;
+    private long price;
 }
