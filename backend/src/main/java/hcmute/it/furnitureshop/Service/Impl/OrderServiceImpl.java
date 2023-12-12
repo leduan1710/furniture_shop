@@ -52,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
         order.setCount(orderRequestDTO.getCount());
         order.setPaid(orderRequestDTO.getPaid());
         order.setNowDelivery(orderRequestDTO.getNowDelivery());
+        order.setPrice(orderRequestDTO.getPrice());
         ///
         Notification notification=new Notification();
         notification.setState(false);
@@ -262,13 +263,13 @@ public class OrderServiceImpl implements OrderService {
             user.get().setPoint(point);
             if (point >0 && point <= 100)
                 user.get().setRankUser(RankEnum.BRONZE);
-            else if (point<=200)
-                user.get().setRankUser(RankEnum.SILVER);
             else if (point<=300)
-                user.get().setRankUser(RankEnum.GOLD);
-            else if (point<=400)
-                user.get().setRankUser(RankEnum.PLATINUM);
+                user.get().setRankUser(RankEnum.SILVER);
             else if (point<=500)
+                user.get().setRankUser(RankEnum.GOLD);
+            else if (point<=700)
+                user.get().setRankUser(RankEnum.PLATINUM);
+            else
                 user.get().setRankUser(RankEnum.DIAMOND);
         }
     }

@@ -1,5 +1,6 @@
 package hcmute.it.furnitureshop.DTO;
 
+import hcmute.it.furnitureshop.Common.RankEnum;
 import hcmute.it.furnitureshop.Common.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,6 @@ public class UserDTO {
     private String district;
     private String ward;
     private String role;
+    private RankEnum rankUser;
+    private int point;
 }

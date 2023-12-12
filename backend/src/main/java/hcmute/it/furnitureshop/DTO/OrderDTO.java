@@ -27,4 +27,5 @@ public class OrderDTO {
     private long productPrice;
     private String userName;
     private long total;
+    private long price;
 }
