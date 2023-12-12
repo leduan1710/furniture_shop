@@ -231,10 +231,6 @@ public class OrderServiceImpl implements OrderService {
                     message = "Đơn hàng đã được xác nhận";
                 }
                 case "processed" -> {
-                    order.get().setState("delivering");
-                    message = "Đơn hàng đang được vận chuyển";
-                }
-                case "delivering" -> {
                     order.get().setState("delivered");
                     message = "Đơn hàng đã được giao";
                     order.get().setPaid(true);
