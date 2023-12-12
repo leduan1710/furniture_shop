@@ -274,25 +274,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int totalOrder() {
+    public int totalOrder(int month) {
         AtomicInteger totalOrder = new AtomicInteger();
-        Date oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(new Date().getMonth()-1);
         orderRepository.findAll().forEach(order -> {
             if(!order.getState().equals("canceled"))
-                if(order.getDateUpdate().after(oneMonthAgo))
+                if(order.getDateUpdate().getMonth() == month)
                     totalOrder.getAndIncrement();
         });
         return totalOrder.get();
     }
     @Override
-    public long totalRevenueOrder() {
+    public long totalRevenueOrder(int month) {
         AtomicLong totalOrder = new AtomicLong();
-        Date oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(new Date().getMonth()-1);
         orderRepository.findAll().forEach(order -> {
             if(order.getState().equals("delivered")) {
-                if (order.getDateUpdate().after(oneMonthAgo))
+                if (order.getDateUpdate().getMonth() == month)
                     totalOrder.set(totalOrder.get() + order.getCount() * order.getProduct().getPrice());
             }
         });

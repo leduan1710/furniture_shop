@@ -22,8 +22,8 @@ public interface OrderService {
     String deleteOrder(Integer orderId);
     OrderDTO getById(Integer orderId);
     String UpdateOrderState(Integer orderId);
-    int totalOrder();
-    long totalRevenueOrder();
+    int totalOrder(int month);
+    long totalRevenueOrder(int month);
     ArrayList<DataChartDTO> getDataChart();
     ArrayList<OrderDashboardDTO> get10RecentOrder();
 }

@@ -123,11 +123,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int getTotalNewUser() {
+    public int getTotalNewUser(int month) {
         int totalNewUser;
-        Date oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(new Date().getMonth()-1);
-        totalNewUser = (int) userRepository.findAll().stream().filter(user -> user.getCreateDate().after(oneMonthAgo)).count();
+        totalNewUser = (int) userRepository.findAll().stream().filter(user -> user.getCreateDate().getMonth() == month).count();
         return totalNewUser;
     }
 

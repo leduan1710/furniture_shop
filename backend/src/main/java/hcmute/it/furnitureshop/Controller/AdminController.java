@@ -6,10 +6,7 @@ import hcmute.it.furnitureshop.Entity.Category;
 import hcmute.it.furnitureshop.Entity.Order;
 import hcmute.it.furnitureshop.Entity.Product;
 import hcmute.it.furnitureshop.Entity.User;
-import hcmute.it.furnitureshop.Service.CategoryService;
-import hcmute.it.furnitureshop.Service.OrderService;
-import hcmute.it.furnitureshop.Service.ProductService;
-import hcmute.it.furnitureshop.Service.UserService;
+import hcmute.it.furnitureshop.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +29,8 @@ public class AdminController {
     CategoryService categoryService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    DiscountService discountService;
     @Autowired
     JwtService jwtService;
     public String getToken(){
@@ -207,12 +206,27 @@ public class AdminController {
             return new ResponseDTO<>(null, "Fail", "Không tồn tại đơn hàng");
         }
     }
-    @RequestMapping("/dataCardDashboard")
-    public ResponseDTO<DataCardDashboard> getDataForCardDashboard()
+
+    @RequestMapping("/discounts")
+    public List<DiscountDTO> getListDiscount(){
+        return discountService.getListDiscount();
+    }
+
+    @RequestMapping("/getDiscountList")
+    public List<Object> getDiscountList()
     {
-        int totalNewUser = userService.getTotalNewUser();
-        int totalOrder = orderService.totalOrder();
-        long totalRevenue = orderService.totalRevenueOrder();
+        List<Object> discountList = new ArrayList<>();
+        discountService.getAll().forEach(discount -> {
+            discountList.add(discount.getDiscountName());
+        });
+        return discountList;
+    }
+    @RequestMapping("/dataCardDashboard/{month}")
+    public ResponseDTO<DataCardDashboard> getDataForCardDashboard(@PathVariable("month") int month)
+    {
+        int totalNewUser = userService.getTotalNewUser(month);
+        int totalOrder = orderService.totalOrder(month);
+        long totalRevenue = orderService.totalRevenueOrder(month);
         DataCardDashboard dataCardDashboard = DataCardDashboard
                 .builder().totalNewUser(totalNewUser).totalRevenue(totalRevenue).totalProductSold(totalOrder)
                 .build();

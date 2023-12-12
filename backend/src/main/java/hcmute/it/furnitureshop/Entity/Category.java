@@ -29,6 +29,7 @@ public class Category implements Serializable{
     private String name;
 
     @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy="category",cascade = CascadeType.ALL)
     private List<Product> product;
 
