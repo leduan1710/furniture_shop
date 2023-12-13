@@ -7,6 +7,7 @@ import hcmute.it.furnitureshop.Entity.Room;
 import hcmute.it.furnitureshop.Repository.CategoryRepository;
 import hcmute.it.furnitureshop.Repository.RoomRepository;
 import hcmute.it.furnitureshop.Service.CategoryService;
+import hcmute.it.furnitureshop.Service.RoomService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.findAll().forEach(category -> {
             categoryDTOS.add(CategoryDTO.builder().categoryId(category.getCategoryId())
                     .name(category.getName())
+                    .roomName(category.getRoom().getRoomName())
                     .image(category.getImage())
                     .build());
 
@@ -74,7 +76,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public String updateCategory(CategoryDTO categoryDTO) {
-        return null;
+        if(!categoryDTO.getName().isEmpty()) {
+            Optional<Category> cate = Optional.ofNullable(categoryRepository.findByName(categoryDTO.getName()));
+            if (cate.isPresent()) {
+                cate.get().setName(categoryDTO.getName());
+                cate.get().setImage(categoryDTO.getImage());
+                cate.get().setRoom(roomRepository.findByRoomName(categoryDTO.getRoomName()).get());
+                return "Cập nhật category thành công";
+            }
+            return "Không tồn tại category";
+        }
+        return "Cập nhật category thất bại";
     }
 
     @Override
@@ -84,6 +96,7 @@ public class CategoryServiceImpl implements CategoryService {
             return CategoryDTO.builder().categoryId(category.get().getCategoryId())
                     .image(category.get().getImage())
                     .name(category.get().getName())
+                    .roomName(category.get().getRoom().getRoomName())
                     .numberProduct(category.get().getProduct().size())
                     .build();
         return null;
@@ -96,6 +109,7 @@ public class CategoryServiceImpl implements CategoryService {
             if (cate.isEmpty()) {
                 Category category = Category.builder().image(categoryDTO.getImage())
                         .name(categoryDTO.getName())
+                        .room(roomRepository.findByRoomName(categoryDTO.getRoomName()).get())
                         .build();
                 categoryRepository.save(category);
                 return category;

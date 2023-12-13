@@ -13,4 +13,5 @@ public class DiscountDTO {
     private int discountId;
     private String discountName;
     private Double percentDiscount;
+    private int numberProduct;
 }

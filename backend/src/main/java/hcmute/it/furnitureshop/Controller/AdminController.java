@@ -2,10 +2,7 @@ package hcmute.it.furnitureshop.Controller;
 
 import hcmute.it.furnitureshop.DTO.*;
 import hcmute.it.furnitureshop.Config.JwtService;
-import hcmute.it.furnitureshop.Entity.Category;
-import hcmute.it.furnitureshop.Entity.Order;
-import hcmute.it.furnitureshop.Entity.Product;
-import hcmute.it.furnitureshop.Entity.User;
+import hcmute.it.furnitureshop.Entity.*;
 import hcmute.it.furnitureshop.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +28,8 @@ public class AdminController {
     OrderService orderService;
     @Autowired
     DiscountService discountService;
+    @Autowired
+    RoomService roomService;
     @Autowired
     JwtService jwtService;
     public String getToken(){
@@ -109,7 +108,7 @@ public class AdminController {
     public ResponseDTO<?> createProduct(@RequestBody ProductDetailDTO createProductDTO){
         Product product = productService.createProduct(createProductDTO);
         if(product != null){
-            return new ResponseDTO<>(productService.createProduct(createProductDTO), "Ok", "Thêm sản phẩm thành công");
+            return new ResponseDTO<>(product, "Ok", "Thêm sản phẩm thành công");
         }
         else{
             return new ResponseDTO<>(null, "Fail", "Thêm sản phẩm thất bại ! Đã tồn tại sản phẩm trong hệ thống");
@@ -148,7 +147,7 @@ public class AdminController {
     public ResponseDTO<?> createCategory(@RequestBody CategoryDTO categoryDTO){
         Category category = categoryService.createCategory(categoryDTO);
         if(category != null){
-            return new ResponseDTO<>(categoryService.createCategory(categoryDTO), "Ok", "Thêm loại sản phẩm thành công");
+            return new ResponseDTO<>(category, "Ok", "Thêm loại sản phẩm thành công");
         }
         else{
             return new ResponseDTO<>(null, "Fail", "Thêm loại sản phẩm thất bại ! Đã tồn tại sản phẩm trong hệ thống");
@@ -176,7 +175,7 @@ public class AdminController {
         });
         return cateList;
     }
-    //////////Order
+    //////Oder
     @RequestMapping("/orders")
     public List<OrderDTO> getAllOrder(){
         return orderService.getAllOrder();
@@ -206,12 +205,54 @@ public class AdminController {
             return new ResponseDTO<>(null, "Fail", "Không tồn tại đơn hàng");
         }
     }
-
+    /////////////Room
+    @RequestMapping("/getRoomList")
+    public List<Object> getRoomList()
+    {
+        List<Object> roomList = new ArrayList<>();
+        roomService.getAll().forEach(room -> {
+            roomList.add(room.getRoomName());
+        });
+        return roomList;
+    }
+    /////////////Discount
     @RequestMapping("/discounts")
     public List<DiscountDTO> getListDiscount(){
         return discountService.getListDiscount();
     }
+    @PostMapping("/createDiscount")
+    public ResponseDTO<?> createDiscount(@RequestBody DiscountDTO discountDTO){
+        Discount discount = discountService.createDiscount(discountDTO);
+        if(discount != null){
+            return new ResponseDTO<>(discount, "Ok", "Thêm loại sản phẩm thành công");
+        }
+        else{
+            return new ResponseDTO<>(null, "Fail", "Thêm loại sản phẩm thất bại ! Đã tồn tại sản phẩm trong hệ thống");
+        }
+    }
 
+    @PostMapping("/updateDiscount")
+    public ResponseDTO<?> updateDiscount(@RequestBody DiscountDTO discountDTO){
+        String message = discountService.updateDiscount(discountDTO);
+        return new ResponseDTO<>(null, "Ok", message);
+    }
+
+    @RequestMapping("/getDiscountById/{discountId}")
+    public ResponseDTO<?> getDiscountById(@PathVariable("discountId") Integer discountId){
+        DiscountDTO discountDTO = discountService.getById(discountId);
+        if(discountDTO != null){
+            return new ResponseDTO<>(discountDTO, "Ok", "Lấy thông tin đơn hàng thành công");
+        }
+        else{
+            return new ResponseDTO<>(null, "Fail", "Không tồn tại đơn hàng");
+        }
+    }
+
+    @RequestMapping("/deleteDiscount/{disId}")
+    public ResponseDTO<?> deleteDiscount(@PathVariable("disId") Integer disId){
+        String message = discountService.deleteDiscount(disId);
+        return new ResponseDTO<>(null, "Ok", message);
+    }
     @RequestMapping("/getDiscountList")
     public List<Object> getDiscountList()
     {
@@ -221,12 +262,13 @@ public class AdminController {
         });
         return discountList;
     }
-    @RequestMapping("/dataCardDashboard/{month}")
-    public ResponseDTO<DataCardDashboard> getDataForCardDashboard(@PathVariable("month") int month)
+
+    @RequestMapping("/dataCardDashboardInMonth/{month}")
+    public ResponseDTO<DataCardDashboard> getDataForCardDashboardInMoth(@PathVariable("month") int month)
     {
-        int totalNewUser = userService.getTotalNewUser(month);
-        int totalOrder = orderService.totalOrder(month);
-        long totalRevenue = orderService.totalRevenueOrder(month);
+        int totalNewUser = userService.getTotalNewUserInMonth(month);
+        int totalOrder = orderService.totalOrderInMonth(month);
+        long totalRevenue = orderService.totalRevenueOrderInMonth(month);
         DataCardDashboard dataCardDashboard = DataCardDashboard
                 .builder().totalNewUser(totalNewUser).totalRevenue(totalRevenue).totalProductSold(totalOrder)
                 .build();
@@ -237,11 +279,37 @@ public class AdminController {
             return new ResponseDTO<>(dataCardDashboard, "Fail", "Không thành công");
         }
     }
-    @RequestMapping("/dataChart")
-    public ResponseDTO<ArrayList<DataChartDTO>> getDataLineChart()
+    @RequestMapping("/dataChartInMonth/{month}")
+    public ResponseDTO<ArrayList<DataChartDTO>> getDataLineChart(@PathVariable("month") int month)
     {
-
-        ArrayList<DataChartDTO> dataChartDTOS = orderService.getDataChart();
+        ArrayList<DataChartDTO> dataChartDTOS = orderService.getDataChart(month);
+        if(dataChartDTOS != null){
+            return new ResponseDTO<>(dataChartDTOS, "Ok", "Lấy dữ liệu thành công");
+        }
+        else{
+            return new ResponseDTO<>(dataChartDTOS, "Fail", "Không thành công");
+        }
+    }
+    @RequestMapping("/dataCardDashboardInYear/{year}")
+    public ResponseDTO<DataCardDashboard> getDataForCardDashboardInYear(@PathVariable("year") int year)
+    {
+        int totalNewUser = userService.getTotalNewUserInYear(year);
+        int totalOrder = orderService.totalOrderInYear(year);
+        long totalRevenue = orderService.totalRevenueOrderInYear(year);
+        DataCardDashboard dataCardDashboard = DataCardDashboard
+                .builder().totalNewUser(totalNewUser).totalRevenue(totalRevenue).totalProductSold(totalOrder)
+                .build();
+        if(dataCardDashboard != null){
+            return new ResponseDTO<>(dataCardDashboard, "Ok", "Lấy dữ liệu thành công");
+        }
+        else{
+            return new ResponseDTO<>(dataCardDashboard, "Fail", "Không thành công");
+        }
+    }
+    @RequestMapping("/dataChartInYear/{year}")
+    public ResponseDTO<ArrayList<DataChartDTO>> getDataLineChartInYear(@PathVariable("year") int year)
+    {
+        ArrayList<DataChartDTO> dataChartDTOS = orderService.getDataChartInYear(year);
         if(dataChartDTOS != null){
             return new ResponseDTO<>(dataChartDTOS, "Ok", "Lấy dữ liệu thành công");
         }
@@ -269,6 +337,30 @@ public class AdminController {
         }
         else{
             return new ResponseDTO<>(bestUsers, "Fail", "Thất bại");
+        }
+    }
+
+    @RequestMapping("/revenueOfRoomInMonth/{month}")
+    public ResponseDTO<?> listPercentRevenueInMonth(@PathVariable("month") int month)
+    {
+        ArrayList<RevenueRoom> revenueRooms = orderService.getListRevenueRoomInMonth(month);
+        if(revenueRooms != null){
+            return new ResponseDTO<>(revenueRooms, "Ok", "Lấy thông tin thành công");
+        }
+        else{
+            return new ResponseDTO<>(revenueRooms, "Ok", "Không có dữ liệu");
+        }
+    }
+
+    @RequestMapping("/revenueOfRoomInYear/{year}")
+    public ResponseDTO<?> listPercentRevenueInYear(@PathVariable("year") int year)
+    {
+        ArrayList<RevenueRoom> revenueRooms = orderService.getListRevenueRoomInYear(year);
+        if(revenueRooms != null){
+            return new ResponseDTO<>(revenueRooms, "Ok", "Lấy thông tin thành công");
+        }
+        else{
+            return new ResponseDTO<>(revenueRooms, "Ok", "Không có dữ liệu");
         }
     }
 

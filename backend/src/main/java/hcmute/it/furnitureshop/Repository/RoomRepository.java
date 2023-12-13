@@ -19,4 +19,6 @@ public interface RoomRepository extends CrudRepository<Room, Integer> {
     @Transactional
     Optional<Room> findById(Integer integer);
 
+    Optional<Room> findByRoomName(String roomName);
+
 }
