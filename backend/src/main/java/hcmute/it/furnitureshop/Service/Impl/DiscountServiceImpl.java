@@ -48,21 +48,21 @@ public class DiscountServiceImpl implements DiscountService {
             discountRepository.deleteById(discountId);
             return "Xóa giảm giá thành công";
         }
-        return "Xóa giảm giáthất bại";
+        return "Xóa giảm giá thất bại";
     }
 
     @Override
     public String updateDiscount(DiscountDTO discountDTO) {
         if(!discountDTO.getDiscountName().isEmpty()) {
-            Optional<Discount> cate = discountRepository.findByDiscountName(discountDTO.getDiscountName());
+            Optional<Discount> cate = discountRepository.findById(discountDTO.getDiscountId());
             if (cate.isPresent()) {
                 cate.get().setDiscountName(discountDTO.getDiscountName());
                 cate.get().setPercentDiscount(discountDTO.getPercentDiscount());
-                return "Cập nhật category thành công";
+                return "Cập nhật giảm giá thành công";
             }
-            return "Không tồn tại category";
+            return "Không tồn tại giảm giá này";
         }
-        return "Cập nhật category thất bại";
+        return "Cập nhật giảm giá thất bại";
     }
 
     @Override

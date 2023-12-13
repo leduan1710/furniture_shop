@@ -60,7 +60,7 @@ public class BannerServiceImpl implements BannerService {
             if (oldBanner.isPresent()) {
                 oldBanner.get().setImage(banner.getImage());
                 oldBanner.get().setTitle(banner.getTitle());
-                oldBanner.get().setProduct(productRepository.findByName(banner.getProductName()).get());
+                oldBanner.get().setProduct(productRepository.findById(banner.getProductId()).get());
                 return "Cập nhật Banner thành công";
             }
             return "Không tồn tại Banner";
@@ -83,16 +83,14 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public Banner createBanner(BannerDTO bannerDTO) {
-        if (!bannerDTO.getProductName().isEmpty()) {
-            Optional<Banner> validbanner = bannerRepository.findByProduct(productRepository.findByName(bannerDTO.getProductName()).get());
-            if (validbanner.isEmpty()) {
-                Banner banner = Banner.builder().image(bannerDTO.getImage())
-                        .title(bannerDTO.getTitle())
-                        .product(productRepository.findByName(bannerDTO.getProductName()).get())
-                        .build();
-                bannerRepository.save(banner);
-                return banner;
-            }
+        Optional<Banner> validbanner = bannerRepository.findByProduct(productRepository.findById(bannerDTO.getProductId()).get());
+        if (validbanner.isEmpty()) {
+            Banner banner = Banner.builder().image(bannerDTO.getImage())
+                    .title(bannerDTO.getTitle())
+                    .product(productRepository.findById(bannerDTO.getProductId()).get())
+                    .build();
+            bannerRepository.save(banner);
+            return banner;
         }
         return null;
     }

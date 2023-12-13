@@ -226,10 +226,10 @@ public class AdminController {
     public ResponseDTO<?> createDiscount(@RequestBody DiscountDTO discountDTO){
         Discount discount = discountService.createDiscount(discountDTO);
         if(discount != null){
-            return new ResponseDTO<>(discount, "Ok", "Thêm loại sản phẩm thành công");
+            return new ResponseDTO<>(discount, "Ok", "Thêm giảm giá thành công");
         }
         else{
-            return new ResponseDTO<>(null, "Fail", "Thêm loại sản phẩm thất bại ! Đã tồn tại sản phẩm trong hệ thống");
+            return new ResponseDTO<>(null, "Fail", "Thêm giảm giá thất bại ! Đã tồn tại giảm giá trong hệ thống");
         }
     }
 

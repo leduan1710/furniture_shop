@@ -77,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String updateCategory(CategoryDTO categoryDTO) {
         if(!categoryDTO.getName().isEmpty()) {
-            Optional<Category> cate = Optional.ofNullable(categoryRepository.findByName(categoryDTO.getName()));
+            Optional<Category> cate = categoryRepository.findById(categoryDTO.getCategoryId());
             if (cate.isPresent()) {
                 cate.get().setName(categoryDTO.getName());
                 cate.get().setImage(categoryDTO.getImage());
