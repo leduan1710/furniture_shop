@@ -31,6 +31,8 @@ public class AdminController {
     @Autowired
     RoomService roomService;
     @Autowired
+    BannerService bannerService;
+    @Autowired
     JwtService jwtService;
     public String getToken(){
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
@@ -137,10 +139,10 @@ public class AdminController {
     public ResponseDTO<CategoryDTO> getCategoryById(@PathVariable("cateId") Integer cateId){
         CategoryDTO categoryDTO = categoryService.getById(cateId);
         if(categoryDTO != null){
-            return new ResponseDTO<>(categoryDTO, "Ok", "Lấy thông tin sản phẩm thành công");
+            return new ResponseDTO<>(categoryDTO, "Ok", "Lấy thông tin loại sản phẩm thành công");
         }
         else{
-            return new ResponseDTO<>(null, "Fail", "Không tồn tại sản phẩm");
+            return new ResponseDTO<>(null, "Ok", "Không tồn tại loại sản phẩm");
         }
     }
     @PostMapping("/createCategory")
@@ -262,7 +264,46 @@ public class AdminController {
         });
         return discountList;
     }
+    ////////////////////Banner
+    @RequestMapping("/banners")
+    public ArrayList<BannerDTO> getAllBanners(){
+        return bannerService.getAllBanner();
+    }
 
+    @RequestMapping("/getBannerById/{bannerId}")
+    public ResponseDTO<BannerDTO> getBannerById(@PathVariable("bannerId") Integer bannerId){
+        BannerDTO bannerDTO = bannerService.getById(bannerId);
+        if(bannerDTO != null){
+            return new ResponseDTO<>(bannerDTO, "Ok", "Lấy thông tin banner thành công");
+        }
+        else{
+            return new ResponseDTO<>(null, "Fail", "Không tồn tại banner");
+        }
+    }
+    @PostMapping("/createBanner")
+    public ResponseDTO<?> createBanner(@RequestBody BannerDTO bannerDTO){
+        Banner banner = bannerService.createBanner(bannerDTO);
+        if(banner != null){
+            return new ResponseDTO<>(banner, "Ok", "Thêm banner thành công");
+        }
+        else{
+            return new ResponseDTO<>(null, "Fail", "Thêm banner thất bại ! Đã tồn tại banner trong hệ thống");
+        }
+    }
+
+    @PostMapping("/updateBanner")
+    public ResponseDTO<?> updateBanner(@RequestBody BannerDTO bannerDTO){
+        String message = bannerService.updateBanner(bannerDTO);
+        return new ResponseDTO<>(null, "Ok", message);
+    }
+
+    @RequestMapping("/deleteBanner/{bannerId}")
+    public ResponseDTO<?> deleteBanner(@PathVariable("bannerId") Integer bannerId){
+        String message = bannerService.deleteBanner(bannerId);
+        return new ResponseDTO<>(null, "Ok", message);
+    }
+
+    ////////////////////Dashboard
     @RequestMapping("/dataCardDashboardInMonth/{month}")
     public ResponseDTO<DataCardDashboard> getDataForCardDashboardInMoth(@PathVariable("month") int month)
     {

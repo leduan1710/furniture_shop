@@ -423,17 +423,19 @@ public class OrderServiceImpl implements OrderService {
         long livingRoomRevenue = 0, bedRoomRevenue = 0, workRoomRevenue = 0, kitchenRenvenue = 0;
         for(int i = 0; i< orders.size(); i++)
         {
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Khách")) {
-                livingRoomRevenue = livingRoomRevenue + orders.get(i).getPrice();
-            }
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Ngủ")) {
-                bedRoomRevenue = bedRoomRevenue + orders.get(i).getPrice();
-            }
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Làm Việc")) {
-                workRoomRevenue = workRoomRevenue + orders.get(i).getPrice();
-            }
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Bếp")) {
-                kitchenRenvenue = kitchenRenvenue + orders.get(i).getPrice();
+            if(orders.get(i).getDateUpdate().getMonth() == month-1 && orders.get(i).getState().equals("delivered")) {
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Khách")) {
+                    livingRoomRevenue = livingRoomRevenue + orders.get(i).getPrice();
+                }
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Ngủ")) {
+                    bedRoomRevenue = bedRoomRevenue + orders.get(i).getPrice();
+                }
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Làm Việc")) {
+                    workRoomRevenue = workRoomRevenue + orders.get(i).getPrice();
+                }
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Bếp")) {
+                    kitchenRenvenue = kitchenRenvenue + orders.get(i).getPrice();
+                }
             }
         }
             ArrayList<RevenueRoom> revenueRooms = new ArrayList<>();
@@ -457,17 +459,19 @@ public class OrderServiceImpl implements OrderService {
         long livingRoomRevenue = 0, bedRoomRevenue = 0, workRoomRevenue = 0, kitchenRenvenue = 0;
         for(int i = 0; i< orders.size(); i++)
         {
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Khách")) {
-                livingRoomRevenue = livingRoomRevenue + orders.get(i).getPrice();
-            }
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Ngủ")) {
-                bedRoomRevenue = bedRoomRevenue + orders.get(i).getPrice();
-            }
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Làm Việc")) {
-                workRoomRevenue = workRoomRevenue + orders.get(i).getPrice();
-            }
-            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Bếp")) {
-                kitchenRenvenue = kitchenRenvenue + orders.get(i).getPrice();
+            if(orders.get(i).getDateUpdate().getYear()+1900 == year && orders.get(i).getState().equals("delivered")) {
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Khách")) {
+                    livingRoomRevenue = livingRoomRevenue + orders.get(i).getPrice();
+                }
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Ngủ")) {
+                    bedRoomRevenue = bedRoomRevenue + orders.get(i).getPrice();
+                }
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Làm Việc")) {
+                    workRoomRevenue = workRoomRevenue + orders.get(i).getPrice();
+                }
+                if (orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Bếp")) {
+                    kitchenRenvenue = kitchenRenvenue + orders.get(i).getPrice();
+                }
             }
         }
             ArrayList<RevenueRoom> revenueRooms = new ArrayList<>();
