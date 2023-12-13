@@ -23,7 +23,7 @@ public class OrderDTO {
     private Boolean nowDelivery;
     private Integer productId;
     private String productName;
-    private List<ImageProduct> imageProducts;
+    private String image1;
     private long productPrice;
     private String userName;
     private long total;

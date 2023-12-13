@@ -21,6 +21,7 @@ public interface UserService {
     public User createUser(CreateUserDTO request);
     public String deleteUser(Integer userId);
     public String updateStatusUser(Integer userId);
-    int getTotalNewUser();
+    int getTotalNewUserInMonth(int month);
+    int getTotalNewUserInYear(int year);
     ArrayList<BestUser> getTop3User();
 }

@@ -1,10 +1,7 @@
 package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.Common.RankEnum;
-import hcmute.it.furnitureshop.DTO.DataChartDTO;
-import hcmute.it.furnitureshop.DTO.OrderDTO;
-import hcmute.it.furnitureshop.DTO.OrderDashboardDTO;
-import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
+import hcmute.it.furnitureshop.DTO.*;
 import hcmute.it.furnitureshop.Entity.Notification;
 import hcmute.it.furnitureshop.Entity.Order;
 import hcmute.it.furnitureshop.Entity.Product;
@@ -167,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDTO> getAllOrder() {
         List<OrderDTO> orderDTOS= new ArrayList<>();
         orderRepository.findAll().forEach(order -> {
-            orderDTOS.add(OrderDTO.builder().orderId(order.getOrderId())
+            var orderDTO = OrderDTO.builder().orderId(order.getOrderId())
                     .count(order.getCount())
                     .date(order.getDate())
                     .state(order.getState())
@@ -177,11 +174,12 @@ public class OrderServiceImpl implements OrderService {
                     .productId(order.getProduct().getProductId())
                     .productName(order.getProduct().getName())
                     .productPrice(order.getProduct().getPrice())
-                    .imageProducts(order.getProduct().getImageProducts())
                     .userName(order.getUser().getName())
                     .total((int) (order.getCount()* order.getProduct().getPrice()))
-                    .build());
-
+                    .build();
+            if(order.getProduct().getImageProducts().size() > 0)
+                orderDTO.setImage1(order.getProduct().getImageProducts().get(0).getImage());
+            orderDTOS.add(orderDTO);
         });
         return orderDTOS;
     }
@@ -211,10 +209,11 @@ public class OrderServiceImpl implements OrderService {
                     .productId(order.get().getProduct().getProductId())
                     .productName(order.get().getProduct().getName())
                     .productPrice(order.get().getProduct().getPrice())
-                    .imageProducts(order.get().getProduct().getImageProducts())
                     .userName(order.get().getUser().getName())
                     .total((int) (order.get().getCount()* order.get().getProduct().getPrice()))
                     .build();
+            if(order.get().getProduct().getImageProducts().size() >0)
+                orderDTO.setImage1(order.get().getProduct().getImageProducts().get(0).getImage());
             return orderDTO;
         }
         return null;
@@ -275,43 +274,99 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int totalOrder() {
+    public int totalOrderInMonth(int month) {
         AtomicInteger totalOrder = new AtomicInteger();
-        Date oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(new Date().getMonth()-1);
         orderRepository.findAll().forEach(order -> {
             if(!order.getState().equals("canceled"))
-                if(order.getDateUpdate().after(oneMonthAgo))
+                if(order.getDateUpdate().getMonth() == month-1)
                     totalOrder.getAndIncrement();
         });
         return totalOrder.get();
     }
     @Override
-    public long totalRevenueOrder() {
+    public long totalRevenueOrderInMonth(int month) {
         AtomicLong totalOrder = new AtomicLong();
-        Date oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(new Date().getMonth()-1);
         orderRepository.findAll().forEach(order -> {
             if(order.getState().equals("delivered")) {
-                if (order.getDateUpdate().after(oneMonthAgo))
-                    totalOrder.set(totalOrder.get() + order.getCount() * order.getProduct().getPrice());
+                if (order.getDateUpdate().getMonth() == month-1)
+                    totalOrder.set(totalOrder.get() + order.getPrice());
             }
         });
         return totalOrder.get();
     }
 
     @Override
-    public ArrayList<DataChartDTO> getDataChart() {
+    public ArrayList<DataChartDTO> getDataChart(int month) {
         ArrayList<DataChartDTO> dataChartDTOS = new ArrayList<>();
         orderRepository.findAll().forEach(order -> {
-            dataChartDTOS.add(
-                    DataChartDTO
-                            .builder()
-                            .productId(order.getProduct().getProductId())
-                            .revenue(order.getProduct().getPrice()*order.getCount())
-                            .productName(order.getProduct().getName())
-                            .build()
+            if(order.getDateUpdate().getMonth() == month-1 && order.getState().equals("delivered"))
+                dataChartDTOS.add(
+                        DataChartDTO
+                                .builder()
+                                .productId(order.getProduct().getProductId())
+                                .revenue(order.getPrice())
+                                .productName(order.getProduct().getName())
+                                .build()
             );
+        });
+        Collections.sort(dataChartDTOS);
+        ArrayList<DataChartDTO> result = new ArrayList<>();
+        for(int i = 0; i<dataChartDTOS.size()-1; i++)
+        {
+            if(dataChartDTOS.get(i).getProductId().equals(dataChartDTOS.get(i+1).getProductId()))
+            {
+                dataChartDTOS.set(i,
+                        new DataChartDTO(
+                                dataChartDTOS.get(i).getProductId()
+                                , dataChartDTOS.get(i).getRevenue()+dataChartDTOS.get(i+1).getRevenue()
+                                , dataChartDTOS.get(i).getProductName()
+                        )
+                );
+                dataChartDTOS.remove(i+1);
+            }
+        }
+        for(int i = 0; i<dataChartDTOS.size() && i<5 ; i++)
+        {
+            result.add(dataChartDTOS.get(i));
+        }
+        return (result);
+    }
+
+    @Override
+    public int totalOrderInYear(int year) {
+        AtomicInteger totalOrder = new AtomicInteger();
+        orderRepository.findAll().forEach(order -> {
+            if(!order.getState().equals("canceled"))
+                if(order.getDateUpdate().getYear()+1900 == year)
+                    totalOrder.getAndIncrement();
+        });
+        return totalOrder.get();
+    }
+    @Override
+    public long totalRevenueOrderInYear(int year) {
+        AtomicLong totalOrder = new AtomicLong();
+        orderRepository.findAll().forEach(order -> {
+            if(order.getState().equals("delivered")) {
+                if (order.getDateUpdate().getYear()+1900 == year)
+                    totalOrder.set(totalOrder.get() + order.getPrice());
+            }
+        });
+        return totalOrder.get();
+    }
+
+    @Override
+    public ArrayList<DataChartDTO> getDataChartInYear(int year) {
+        ArrayList<DataChartDTO> dataChartDTOS = new ArrayList<>();
+        orderRepository.findAll().forEach(order -> {
+            if(order.getDateUpdate().getYear()+1900 == year && order.getState().equals("delivered"))
+                dataChartDTOS.add(
+                        DataChartDTO
+                                .builder()
+                                .productId(order.getProduct().getProductId())
+                                .revenue(order.getPrice())
+                                .productName(order.getProduct().getName())
+                                .build()
+                );
         });
         Collections.sort(dataChartDTOS);
         ArrayList<DataChartDTO> result = new ArrayList<>();
@@ -344,7 +399,7 @@ public class OrderServiceImpl implements OrderService {
             orderDTOS.add(OrderDashboardDTO.builder().userName(order.getUser().getName())
                     .dateUpdate(order.getDateUpdate())
                     .orderId(order.getOrderId())
-                    .total(order.getProduct().getPrice()*order.getCount()).build());
+                    .total(order.getPrice()).build());
 
         });
         Collections.sort(orderDTOS);
@@ -354,5 +409,72 @@ public class OrderServiceImpl implements OrderService {
             result.add(orderDTOS.get(i));
         }
         return (result);
+    }
+
+    @Override
+    public ArrayList<RevenueRoom> getListRevenueRoomInMonth(int month) {
+        long totalRevenue = 0;
+        ArrayList<Order> orders = (ArrayList<Order>) orderRepository.findAll();
+        for(int i = 0; i< orders.size(); i++)
+        {
+            if(orders.get(i).getDateUpdate().getMonth() == month-1 && orders.get(i).getState().equals("delivered"))
+                totalRevenue = totalRevenue + orders.get(i).getPrice();
+        }
+        long livingRoomRevenue = 0, bedRoomRevenue = 0, workRoomRevenue = 0, kitchenRenvenue = 0;
+        for(int i = 0; i< orders.size(); i++)
+        {
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Khách")) {
+                livingRoomRevenue = livingRoomRevenue + orders.get(i).getPrice();
+            }
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Ngủ")) {
+                bedRoomRevenue = bedRoomRevenue + orders.get(i).getPrice();
+            }
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Làm Việc")) {
+                workRoomRevenue = workRoomRevenue + orders.get(i).getPrice();
+            }
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Bếp")) {
+                kitchenRenvenue = kitchenRenvenue + orders.get(i).getPrice();
+            }
+        }
+            ArrayList<RevenueRoom> revenueRooms = new ArrayList<>();
+            revenueRooms.add(new RevenueRoom("Phòng Khách", (double) (livingRoomRevenue)));
+            revenueRooms.add(new RevenueRoom("Phòng Ngủ", (double) (bedRoomRevenue)));
+            revenueRooms.add(new RevenueRoom("Phòng Làm Việc", (double) (workRoomRevenue)));
+            revenueRooms.add(new RevenueRoom("Phòng Bếp", (double) (kitchenRenvenue)));
+            Collections.sort(revenueRooms);
+            return revenueRooms;
+    }
+
+    @Override
+    public ArrayList<RevenueRoom> getListRevenueRoomInYear(int year) {
+        long totalRevenue = 0;
+        ArrayList<Order> orders = (ArrayList<Order>) orderRepository.findAll();
+        for(int i = 0; i< orders.size(); i++)
+        {
+            if(orders.get(i).getDateUpdate().getYear()+1900 == year && orders.get(i).getState().equals("delivered"))
+                totalRevenue = totalRevenue + orders.get(i).getPrice();
+        }
+        long livingRoomRevenue = 0, bedRoomRevenue = 0, workRoomRevenue = 0, kitchenRenvenue = 0;
+        for(int i = 0; i< orders.size(); i++)
+        {
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Khách")) {
+                livingRoomRevenue = livingRoomRevenue + orders.get(i).getPrice();
+            }
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Ngủ")) {
+                bedRoomRevenue = bedRoomRevenue + orders.get(i).getPrice();
+            }
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Làm Việc")) {
+                workRoomRevenue = workRoomRevenue + orders.get(i).getPrice();
+            }
+            if(orders.get(i).getProduct().getCategory().getRoom().getRoomName().equals("Phòng Bếp")) {
+                kitchenRenvenue = kitchenRenvenue + orders.get(i).getPrice();
+            }
+        }
+            ArrayList<RevenueRoom> revenueRooms = new ArrayList<>();
+            revenueRooms.add(new RevenueRoom("Phòng Khách", (double) (livingRoomRevenue)));
+            revenueRooms.add(new RevenueRoom("Phòng Ngủ", (double) (bedRoomRevenue)));
+            revenueRooms.add(new RevenueRoom("Phòng Làm Việc", (double) (workRoomRevenue)));
+            revenueRooms.add(new RevenueRoom("Phòng Bếp", (double) (kitchenRenvenue)));
+            return revenueRooms;
     }
 }

@@ -1,9 +1,6 @@
 package hcmute.it.furnitureshop.Service;
 
-import hcmute.it.furnitureshop.DTO.DataChartDTO;
-import hcmute.it.furnitureshop.DTO.OrderDTO;
-import hcmute.it.furnitureshop.DTO.OrderDashboardDTO;
-import hcmute.it.furnitureshop.DTO.OrderRequestDTO;
+import hcmute.it.furnitureshop.DTO.*;
 import hcmute.it.furnitureshop.Entity.Order;
 import hcmute.it.furnitureshop.Entity.User;
 
@@ -22,8 +19,13 @@ public interface OrderService {
     String deleteOrder(Integer orderId);
     OrderDTO getById(Integer orderId);
     String UpdateOrderState(Integer orderId);
-    int totalOrder();
-    long totalRevenueOrder();
-    ArrayList<DataChartDTO> getDataChart();
+    int totalOrderInMonth(int month);
+    long totalRevenueOrderInMonth(int month);
+    ArrayList<DataChartDTO> getDataChart(int month);
+    int totalOrderInYear(int year);
+    long totalRevenueOrderInYear(int year);
+    ArrayList<DataChartDTO> getDataChartInYear(int year);
     ArrayList<OrderDashboardDTO> get10RecentOrder();
+    ArrayList<RevenueRoom> getListRevenueRoomInMonth(int month);
+    ArrayList<RevenueRoom> getListRevenueRoomInYear(int year);
 }

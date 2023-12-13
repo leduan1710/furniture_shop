@@ -2,14 +2,8 @@ package hcmute.it.furnitureshop.Service.Impl;
 
 import hcmute.it.furnitureshop.DTO.ProductDTO;
 import hcmute.it.furnitureshop.DTO.ProductDetailDTO;
-import hcmute.it.furnitureshop.Entity.Category;
-import hcmute.it.furnitureshop.Entity.Discount;
-import hcmute.it.furnitureshop.Entity.Product;
-import hcmute.it.furnitureshop.Entity.Room;
-import hcmute.it.furnitureshop.Repository.CategoryRepository;
-import hcmute.it.furnitureshop.Repository.DiscountRepository;
-import hcmute.it.furnitureshop.Repository.ProductRepository;
-import hcmute.it.furnitureshop.Repository.RoomRepository;
+import hcmute.it.furnitureshop.Entity.*;
+import hcmute.it.furnitureshop.Repository.*;
 import hcmute.it.furnitureshop.Service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -34,6 +26,8 @@ public class ProductServiceImpl implements ProductService {
     private RoomRepository roomRepository;
     @Autowired
     private DiscountRepository discountRepository;
+    @Autowired
+    private ImageProductRepository imageProductRepository;
     @Override
     public Iterable<Product> getTop8Product() {
         return productRepository.findTop8ByProductSold();
@@ -134,7 +128,6 @@ public class ProductServiceImpl implements ProductService {
             ProductDetailDTO productDetail = ProductDetailDTO.builder()
                     .productId(productJoinCate.getProductId())
                     .name(productJoinCate.getName())
-                    .imageProducts(productJoinCate.getImageProducts())
                     .price(productJoinCate.getPrice())
                     .size(productJoinCate.getSize())
                     .categoryName(productJoinCate.getCategory().getName())
@@ -144,6 +137,13 @@ public class ProductServiceImpl implements ProductService {
                     .quantity(productJoinCate.getQuantity())
                     .status(productJoinCate.getStatus())
                     .build();
+            List<ImageProduct> listImage = productJoinCate.getImageProducts();
+            if (listImage.size() > 0)
+                productDetail.setImage1(productJoinCate.getImageProducts().get(0).getImage());
+            if (listImage.size() > 1)
+                productDetail.setImage2(productJoinCate.getImageProducts().get(0).getImage());
+            if (listImage.size() > 2)
+                productDetail.setImage3(productJoinCate.getImageProducts().get(0).getImage());
             detailDTOList.add(productDetail);
         });
         return detailDTOList;
@@ -154,16 +154,36 @@ public class ProductServiceImpl implements ProductService {
         if(product.isPresent())
         {
             product.get().setName(productDTO.getName());
-            product.get().setImageProducts(productDTO.getImageProducts());
             product.get().setPrice(productDTO.getPrice());
             product.get().setSize(productDTO.getSize());
             product.get().setCategory(categoryRepository.findByName(productDTO.getCategoryName()));
             product.get().setMaterial(productDTO.getMaterial());
             product.get().setQuantity(productDTO.getQuantity());
-            if(productDTO.getPercentDiscount() != null)
-                product.get().setDiscount(discountRepository.findByPercentDiscount(productDTO.getPercentDiscount()).get());
+            if(productDTO.getDiscountName() != null)
+                product.get().setDiscount(discountRepository.findByDiscountName(productDTO.getDiscountName()).get());
             product.get().setStatus(productDTO.getStatus());
-            //productRepository.save(product.get());
+            List<ImageProduct> listImageProduct = new ArrayList<>();
+            if(!productDTO.getImage1().isEmpty())
+            {
+                var image = ImageProduct.builder().image(productDTO.getImage1())
+                        .product(product.get()).build();
+                listImageProduct.add(image);
+
+            }
+            if(!productDTO.getImage2().isEmpty())
+            {
+                var image = ImageProduct.builder().image(productDTO.getImage2())
+                        .product(product.get()).build();
+                listImageProduct.add(image);
+            }
+            if(!productDTO.getImage3().isEmpty())
+            {
+                var image = ImageProduct.builder().image(productDTO.getImage3())
+                        .product(product.get()).build();
+                listImageProduct.add(image);
+            }
+            imageProductRepository.findImageProductByProduct(product.get()).forEach(imageProduct -> imageProductRepository.delete(imageProduct));
+            product.get().setImageProducts(listImageProduct);
             return "Đã cập nhật sản phẩm thành công";
         }
         return "Không tồn tại sản phẩm trong hệ thống";
@@ -184,9 +204,9 @@ public class ProductServiceImpl implements ProductService {
         if(productRepository.findByName(createProductDTO.getName()).isEmpty())
         {
             var product = Product.builder()
+                    .dateImport(new Date())
                     .productId(createProductDTO.getProductId())
                     .name(createProductDTO.getName())
-                    .imageProducts(createProductDTO.getImageProducts())
                     .price(createProductDTO.getPrice())
                     .size(createProductDTO.getSize())
                     .category(categoryRepository.findByName(createProductDTO.getCategoryName()))
@@ -196,6 +216,28 @@ public class ProductServiceImpl implements ProductService {
                     .quantity(createProductDTO.getQuantity())
                     .status("active")
                     .build();
+            List<ImageProduct> listImageProduct = new ArrayList<>();
+            if(!createProductDTO.getImage1().isEmpty())
+            {
+                var image = ImageProduct.builder().image(createProductDTO.getImage1())
+                        .product(product).build();
+                listImageProduct.add(image);
+            }
+            if(!createProductDTO.getImage2().isEmpty())
+            {
+                var image = ImageProduct.builder().image(createProductDTO.getImage2())
+                        .product(product).build();
+                listImageProduct.add(image);
+            }
+            if(!createProductDTO.getImage3().isEmpty())
+            {
+                var image = ImageProduct.builder().image(createProductDTO.getImage3())
+                        .product(product).build();
+                listImageProduct.add(image);
+            }
+            product.setImageProducts(listImageProduct);
+            if(createProductDTO.getDiscountName() != null)
+                product.setDiscount(discountRepository.findByDiscountName(createProductDTO.getDiscountName()).get());
             productRepository.save(product);
             return product;
         }
@@ -228,15 +270,19 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> product = productRepository.findById(productId);
         Discount discount = product.get().getDiscount();
         Double percentDiscount;
-        if(discount != null)
+        String discountName;
+        if(discount != null) {
             percentDiscount = discount.getPercentDiscount();
+            discountName = discount.getDiscountName();
+        }
         else {
             percentDiscount = null;
+            discountName = null;
         }
-        return product.map(value -> ProductDetailDTO.builder()
+        return product.map(value -> {
+                var productDetail = ProductDetailDTO.builder()
                 .productId(value.getProductId())
                 .name(value.getName())
-                .imageProducts(value.getImageProducts())
                 .price(value.getPrice())
                 .size(value.getSize())
                 .categoryName(value.getCategory().getName())
@@ -247,7 +293,16 @@ public class ProductServiceImpl implements ProductService {
                 .status(value.getStatus())
                 .numberFavorite(value.getFavorites().size())
                 .numberRating(value.getRatings().size())
-                .percentDiscount(percentDiscount)
-                .build()).orElse(null);
+                .percentDiscount(percentDiscount).discountName(discountName)
+                .build();
+                List<ImageProduct> listImage = value.getImageProducts();
+                if (listImage.size() > 0)
+                    productDetail.setImage1(value.getImageProducts().get(0).getImage());
+                if (listImage.size() > 1)
+                    productDetail.setImage2(value.getImageProducts().get(1).getImage());
+                if (listImage.size() > 2)
+                    productDetail.setImage3(value.getImageProducts().get(2).getImage());
+                return productDetail;
+        }).orElse(null);
     }
 }

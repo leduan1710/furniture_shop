@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DiscountRepository extends CrudRepository<Discount,Integer> {
     Optional<Discount> findByPercentDiscount(Double percentDiscount);
+    Optional<Discount> findByDiscountName(String discountName);
 }

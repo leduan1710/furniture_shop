@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDTO {
-    private int categoryId;
-    private String name;
-    private String image;
-    private String icon;
+public class RevenueRoom implements Comparable<RevenueRoom>{
     private String roomName;
-    private int numberProduct;
+    private Double revenue;
+    @Override
+    public int compareTo(RevenueRoom o) {
+        return o.getRevenue().compareTo(this.revenue);
+    }
 }
