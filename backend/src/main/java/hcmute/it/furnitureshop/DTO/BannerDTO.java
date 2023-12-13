@@ -1,6 +1,5 @@
 package hcmute.it.furnitureshop.DTO;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

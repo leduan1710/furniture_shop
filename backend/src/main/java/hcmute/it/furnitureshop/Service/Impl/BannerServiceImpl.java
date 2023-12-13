@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -84,7 +83,7 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public Banner createBanner(BannerDTO bannerDTO) {
-        if(!bannerDTO.getProductName().isEmpty()) {
+        if (!bannerDTO.getProductName().isEmpty()) {
             Optional<Banner> validbanner = bannerRepository.findByProduct(productRepository.findByName(bannerDTO.getProductName()).get());
             if (validbanner.isEmpty()) {
                 Banner banner = Banner.builder().image(bannerDTO.getImage())
@@ -96,5 +95,10 @@ public class BannerServiceImpl implements BannerService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Iterable<Banner> findTop5Banner() {
+        return bannerRepository.findTop5Banner();
     }
 }

@@ -11,4 +11,5 @@ public interface BannerService {
     public BannerDTO getById(Integer bannerId);
     public String updateBanner(BannerDTO banner);
     public Banner createBanner(BannerDTO bannerDTO);
+    public Iterable<Banner> findTop5Banner();
 }
