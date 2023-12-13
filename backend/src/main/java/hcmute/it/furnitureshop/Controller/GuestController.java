@@ -43,6 +43,8 @@ public class GuestController {
     ChangeToDTOService changeToDTOService;
     @Autowired
     FavoriteService favoriteService;
+    @Autowired
+    BannerService bannerService;
     @GetMapping("/room")
     public ResponseEntity<Iterable<Room>> getAllRoom(){
         Iterable<Room> rooms=roomService.getAll();
@@ -150,5 +152,9 @@ public class GuestController {
     @GetMapping("/getProductNearProduct/{productId}")
     public ResponseEntity<Iterable<ProductDTO>> getProductNearProduct(@PathVariable("productId")Integer productId){
         return ResponseEntity.ok(changeToDTOService.changeListProductToDTO(productService.findProductNearProduct(productId)));
+    }
+    @GetMapping("/getTop5Banner")
+    public ResponseEntity<Iterable<BannerDTO>> getTop5Banner(){
+        return ResponseEntity.ok(changeToDTOService.changeListBannerToDTO(bannerService.findTop5Banner()));
     }
 }

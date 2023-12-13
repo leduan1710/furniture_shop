@@ -107,4 +107,16 @@ public class ChangeToDTOService {
         });
         return  responseReviewDTOS;
     }
+    public ArrayList<BannerDTO> changeListBannerToDTO(Iterable<Banner> banners){
+        ArrayList<BannerDTO> bannerDTOS=new ArrayList<>();
+        banners.forEach(banner -> {
+            BannerDTO bannerDTO=new BannerDTO();
+            bannerDTO.setBannerId(banner.getBannerId());
+            bannerDTO.setImage(banner.getImage());
+            bannerDTO.setTitle(banner.getTitle());
+            bannerDTO.setProductId(banner.getProduct().getProductId());
+            bannerDTOS.add(bannerDTO);
+        });
+        return bannerDTOS;
+    }
 }
